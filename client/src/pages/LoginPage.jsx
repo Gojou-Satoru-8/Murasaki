@@ -1,16 +1,11 @@
-import Header from "../components/Header";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../store";
+import { Form, Link, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { Divider, Input, Button } from "@nextui-org/react";
-import {
-  Form,
-  Link,
-  json,
-  redirect,
-  useActionData,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-import { useEffect, useState } from "react";
+import Header from "../components/Header";
+
 const LoginPage = () => {
   const navigate = useNavigate();
 
@@ -22,6 +17,14 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   // On first load, there won't be any error, only sing up successful message
   // But on subsequent rerenders, when errors will be there, we shall show the errors only
+
+  const authState = useSelector((state) => state.auth);
+  console.log(authState);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (authState.isAuthenticated) navigate("/");
+  });
 
   useEffect(() => {
     if (message) {
@@ -42,27 +45,30 @@ const LoginPage = () => {
     }
 
     const formDataObj = Object.fromEntries(formData);
-    const response = await fetch("http://localhost:3000/login", {
-      method: "POST", // POST
-      body: JSON.stringify(formDataObj),
-      headers: { "Content-Type": "application/json" },
-    });
-    console.log(response);
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST", // POST
+        body: JSON.stringify(formDataObj),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      console.log(response);
 
-    const data = await response.json();
-    console.log(data);
-    // Now we're ready to show the output instead of Loading text
-    setTimeout(() => {
-      // NOTE: Set a timer of 1.5 seconds here, if you want the loading alert to persist for sometime
-      setIsLoading(false);
+      const data = await response.json();
+      console.log(data);
+      // Now we're ready to show the output instead of Loading text
+      setTimeout(() => {
+        // NOTE: Set a timer of 1.5 seconds here, if you want the loading alert to persist for sometime
+        setIsLoading(false);
+        setMessage(data.message); // Logged in successfully or incorrect email or password
+        if (data.status !== "success") return;
 
-      if (data.status !== "success") {
-        setMessage(data.message);
-        return;
-      }
-      setMessage("Logged In successfully");
-      setTimeout(() => navigate("/"), 1000);
-    }, 1500);
+        dispatch(authActions.login({ user: data.user }));
+        setTimeout(() => navigate("/"), 1000);
+      }, 1500);
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (

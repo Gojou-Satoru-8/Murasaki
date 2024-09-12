@@ -1,18 +1,22 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Input } from "@nextui-org/react";
 import MainContent from "../components/MainContent";
 import NoteEditor from "../components/NoteEditor";
 import CodeEditor from "../components/CodeEditor";
 import Tags from "../components/Tags";
 
-const NewNotePage = () => {
+const NotePage = () => {
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
-  const [tags, setTags] = useState([]);
-  const [noteContent, setNoteContent] = useState("");
-  const [codeContent, setCodeContent] = useState("// Your code here");
+  const location = useLocation();
+  console.log(location.state);
+  const note = location.state?.note;
+
+  const [title, setTitle] = useState(note.title || "");
+  const [tags, setTags] = useState(note.tags || []);
+  const [noteContent, setNoteContent] = useState(note.noteContent || "");
+  const [codeContent, setCodeContent] = useState(note.codeContent || "// Your code here");
   const [saveText, setSaveText] = useState("");
   console.log("Note Content: ", noteContent);
   console.log("Code Content: ", codeContent);
@@ -95,4 +99,4 @@ const NewNotePage = () => {
   );
 };
 
-export default NewNotePage;
+export default NotePage;

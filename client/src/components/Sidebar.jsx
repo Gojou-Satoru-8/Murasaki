@@ -6,9 +6,12 @@ const Sidebar = ({ className }) => {
     <div className={className}>
       <div className="h-[15%] mx-4 my-2 flex flex-col">
         <div className="py-2">
-          <Button className="w-[95%]" startContent={<img src={NoteIcon}></img>}>
-            New Note
-          </Button>
+          <Link to="/new-note">
+            <Button className="w-[95%]" startContent={<img src={NoteIcon}></img>}>
+              {" "}
+              New Note
+            </Button>
+          </Link>
         </div>
         <Divider />
         <div className="py-2 text-center">

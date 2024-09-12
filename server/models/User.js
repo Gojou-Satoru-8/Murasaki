@@ -44,6 +44,13 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// VIrtual fields (notes):
+userSchema.virtual("notes", {
+  ref: "Note",
+  localField: "_id",
+  foreignField: "user",
+});
+
 // MONGOOSE METHODS:
 userSchema.methods.isPasswordCorrect = async function (password) {
   console.log("Given password: ", password);

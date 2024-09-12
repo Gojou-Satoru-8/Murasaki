@@ -10,10 +10,31 @@ import {
   Avatar,
 } from "@nextui-org/react";
 import { SearchIcon } from "./SearchIcon.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../store/index.js";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const authState = useSelector((state) => state.auth);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/logout", { credentials: "include" });
+      if (!response.ok) {
+        alert("Unable to log out! Server Issue");
+        return;
+      }
+      const data = await response.json();
+      console.log(data);
+      dispatch(authActions.logout()); // Need to call this, cuz this will cause a re-render of the components
+      // which are using the authState, for example HomePage, based on which we are nagivated to Login
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
-    <header className="">
+    <header className="my-6">
       <Navbar
         isBordered
         className="dark:bg-gray-700 bg-gray-950 text-white w-[95%] sm:w-[90%] mx-auto my-2 rounded-3xl"
@@ -42,19 +63,23 @@ const Header = () => {
                 as="button"
                 className="transition-transform"
                 color="secondary"
-                name="Jason Hughes"
+                name={authState.user?.name
+                  .split(" ")
+                  .map((segment) => segment.at(0))
+                  .join("")}
+                // Here we're taking initials of each segment of name
                 size="sm"
-                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                src={authState.user?.profilePic}
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold">zoey@example.com</p>
+                <p className="font-semibold">{authState.user ? "Signed in as" : "Not Signed in"}</p>
+                <p className="font-semibold">{authState.user && authState.user.email}</p>
               </DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="configurations">Configurations</DropdownItem>
-              <DropdownItem key="logout" color="danger">
+              {/* <DropdownItem key="configurations">Configurations</DropdownItem> */}
+              <DropdownItem key="logout" color="danger" onClick={handleLogout}>
                 Log Out
               </DropdownItem>
             </DropdownMenu>

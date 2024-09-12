@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { Divider, Input, Button } from "@nextui-org/react";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Form, Link, redirect, useActionData, useNavigate } from "react-router-dom";
 
 const validatePassword = (password, passwordConfirm) => {
@@ -15,6 +16,7 @@ const validatePassword = (password, passwordConfirm) => {
 };
 
 const SignUpPage = () => {
+  const authState = useSelector((state) => state.auth);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -25,6 +27,10 @@ const SignUpPage = () => {
       return () => clearTimeout(timeout);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (authState.isAuthenticated) navigate("/");
+  });
 
   const handleSignUpForm = async (e) => {
     setIsLoading(true);

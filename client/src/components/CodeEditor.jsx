@@ -18,18 +18,18 @@ const editorStyle = {
   fontSize: "14px", // Adjust this value as needed
 };
 
-const CodeEditor = () => {
-  const [codeContents, setCodeContents] = useState("// Your code here");
+const CodeEditor = ({ codeContent, setCodeContent }) => {
+  // const [codeContents, setCodeContents] = useState("// Your code here");
   const handleChangeContent = (val, viewUpdate) => {
-    console.log("val:", val);
-    console.log(viewUpdate);
+    // console.log("val:", val);
+    // console.log(viewUpdate);
 
-    setCodeContents(val);
+    setCodeContent(val);
   };
 
   return (
     <CodeMirror
-      value={codeContents}
+      value={codeContent}
       height="300px"
       theme={atomone}
       //   readOnly={true}
