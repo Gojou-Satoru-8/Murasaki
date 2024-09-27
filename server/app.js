@@ -19,7 +19,7 @@ app.use(morgan(process.env.NODE_ENV));
 app.use(
   cors({
     origin: ["http://localhost:5173"],
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
+    // methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
     credentials: true,
   })
 );

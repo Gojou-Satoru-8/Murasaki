@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Input } from "@nextui-org/react";
 import MainContent from "../components/MainContent";
 import NoteEditor from "../components/NoteEditor";
 import CodeEditor from "../components/CodeEditor";
 import Tags from "../components/Tags";
+import { notesActions } from "../store";
 
 const NewNotePage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([]);
   const [noteContent, setNoteContent] = useState("");
@@ -16,16 +18,16 @@ const NewNotePage = () => {
   const [saveText, setSaveText] = useState("");
   console.log("Note Content: ", noteContent);
   console.log("Code Content: ", codeContent);
-  const authState = useSelector((state) => state.auth);
-  console.log(authState);
 
-  useEffect(() => {
-    if (!authState.isAuthenticated) {
-      // alert("Please login to gain access to this page");
-      navigate("/log-in");
-      return;
-    }
-  });
+  // const authState = useSelector((state) => state.auth);
+  // console.log(authState);
+  // useEffect(() => {
+  //   if (!authState.isAuthenticated) {
+  //     // alert("Please login to gain access to this page");
+  //     navigate("/log-in");
+  //     return;
+  //   }
+  // });
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleNoteSave = async () => {
@@ -44,18 +46,24 @@ const NewNotePage = () => {
         }),
       });
 
-      if (!response.ok) console.log("Request sent but unfavourable response");
       const data = await response.json();
       console.log(data);
-      // Response is either 401 with message User not logged in, or 200 with Note successfully created
+      if (!response.ok) console.log("Request sent but unfavourable response");
+      // Expected responses:
+      // status 401: User not logged in, status 201: Note created, and status 500: Unable to save note
+      // NOTE: response.ok is true for 201 Created also
       if (response.status === 401) {
         navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
         return;
       }
       setSaveText(data.message);
+      // Saving the created note to redux, to prevent additional fetch for reflecting the added note in homepage:
+      dispatch(notesActions.addNote({ note: data.note }));
+
       setTimeout(() => {
         setSaveText("");
-      }, 8000);
+        navigate("/");
+      }, 3000);
     } catch (err) {
       console.log(err.message);
     }
@@ -86,7 +94,12 @@ const NewNotePage = () => {
           <Button color="primary" onClick={handleNoteSave}>
             Save
           </Button>
-          <Button color="danger" onClick={() => {}}>
+          <Button
+            color="danger"
+            onClick={() => {
+              navigate("/");
+            }}
+          >
             Cancel
           </Button>
         </div>

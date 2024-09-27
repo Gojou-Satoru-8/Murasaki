@@ -1,46 +1,30 @@
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+// import { useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
 import MainContent from "../components/MainContent";
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardBody, Button, CardFooter } from "@nextui-org/react";
+import { useSelector, useDispatch } from "react-redux";
+// import { useRedirectIfNotAuthenticated } from "../hooks/checkAuthHooks";
+
+import { notesActions } from "../store";
 
 const HomePage = () => {
-  const authState = useSelector((state) => state.auth);
-  console.log(authState);
-  const [notes, setNotes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!authState.isAuthenticated) {
-      // alert("Please login to gain access to this page");
-      navigate("/log-in");
-      return;
-    }
-  });
+  // const authState = useRedirectIfNotAuthenticated();
+  // console.log(authState);
+  const dispatch = useDispatch();
+  const notesState = useSelector((state) => state.notes);
+  console.log(notesState);
 
-  useEffect(() => {
-    const fetchNotes = async () => {
-      const response = await fetch("http://localhost:3000/notes", {
-        credentials: "include",
-      });
-      const data = await response.json();
-      console.log(data);
+  const { notes } = notesState;
 
-      if (response.status === 404) return;
-      setNotes(data.notes);
-      setIsLoading(false);
-    };
-    fetchNotes();
-  }, []);
-
-  const handleViewNote = async (id) => {
-    const response = await fetch(`http://localhost:3000/notes/${id}`, {
-      credentials: "include",
-    });
-    const data = await response.json();
-    console.log(data);
-    navigate(`/notes/${id}`, { state: { note: notes.find((note) => note._id === id) } });
-  };
+  // const handleViewNote = async (id) => {
+  //   const response = await fetch(`http://localhost:3000/notes/${id}`, {
+  //     credentials: "include",
+  //   });
+  //   const data = await response.json();
+  //   console.log(data);
+  //   navigate(`/notes/${id}`, { state: { note: notes.find((note) => note._id === id) } });
+  // };
   const handleDeleteNote = async (id) => {
     const response = await fetch(`http://localhost:3000/notes/${id}`, {
       method: "DELETE",
@@ -48,21 +32,17 @@ const HomePage = () => {
     });
     // const data = await response.json();
     // console.log(data);
-    if (response.status !== 204) return;
-    setNotes((notes) => {
-      // const newNotes = [...notes];
-      // newNotes.splice(
-      //   newNotes.findIndex((note) => note._id === id),
-      //   1
-      // );
-      // return newNotes;
-      return notes.filter((note) => note._id !== id);
-    });
+    if (response.status !== 204) {
+      alert("Unable to delete");
+
+      return;
+    }
+    dispatch(notesActions.deleteNote(id));
   };
 
   return (
     <MainContent title={notes.length === 0 ? "You have no notes" : "All Your Notes Here"}>
-      {isLoading && <h1 className="mt-10 text-center">Loading your notes...</h1>}
+      {/* {isLoading && <h1 className="mt-10 text-center">Loading your notes...</h1>} */}
       <div className="mt-10 grid md:grid-cols-[repeat(3,30%)] sm:grid-cols-[repeat(2,45%)] grid-cols-1 justify-center gap-8">
         {notes.length > 0 &&
           notes.map((note) => (
@@ -77,16 +57,18 @@ const HomePage = () => {
                 </div>
               </CardHeader>
               <CardFooter className="justify-evenly">
-                <Button
-                  className={""}
-                  color="primary"
-                  radius="full"
-                  size="sm"
-                  variant="solid"
-                  onClick={() => handleViewNote(note._id)}
-                >
-                  View
-                </Button>
+                <Link to={`/notes/${note._id}`}>
+                  <Button
+                    className={""}
+                    color="primary"
+                    radius="full"
+                    size="sm"
+                    variant="solid"
+                    // onClick={() => handleViewNote(note._id)}
+                  >
+                    View
+                  </Button>
+                </Link>
                 <Button
                   className={""}
                   color="danger"

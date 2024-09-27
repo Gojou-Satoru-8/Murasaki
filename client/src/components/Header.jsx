@@ -26,7 +26,7 @@ const Header = () => {
       }
       const data = await response.json();
       console.log(data);
-      dispatch(authActions.logout()); // Need to call this, cuz this will cause a re-render of the components
+      dispatch(authActions.unsetUser()); // Need to call this, cuz this will cause a re-render of the components
       // which are using the authState, for example HomePage, based on which we are nagivated to Login
     } catch (err) {
       console.log(err.message);

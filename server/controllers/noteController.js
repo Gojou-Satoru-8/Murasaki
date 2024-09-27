@@ -27,6 +27,7 @@ exports.postNote = catchAsync(async (req, res, next) => {
   res.status(201).json({
     status: "success",
     message: `Note created with id ${newNote.id}`,
+    note: newNote,
   });
 });
 

@@ -1,7 +1,11 @@
 import { Divider, Button } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import NoteIcon from "../assets/pen.png";
+import { useSelector } from "react-redux";
+
 const Sidebar = ({ className }) => {
+  const tags = useSelector((state) => state.notes.tags);
+
   return (
     <div className={className}>
       <div className="h-[15%] mx-4 my-2 flex flex-col">
@@ -27,82 +31,12 @@ const Sidebar = ({ className }) => {
           <h1>Tags</h1>
         </div>
         <ul>
-          <div className="py-3">
-            <li>Item 1</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 2</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 3</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 4</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 5</li>
-          </div>
-          <div className="py-3">
-            <li>Item 1</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 2</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 3</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 4</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 5</li>
-          </div>
-          <div className="py-3">
-            <li>Item 1</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 2</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 3</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 4</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 5</li>
-          </div>
-          <div className="py-3">
-            <li>Item 1</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 2</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 3</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 4</li>
-          </div>
-          <Divider />
-          <div className="py-3">
-            <li>Item 5</li>
-          </div>
+          {tags.map((tag) => (
+            <div className="py-3" key={tag}>
+              <li>{tag}</li>
+              <Divider />
+            </div>
+          ))}
         </ul>
       </div>
     </div>

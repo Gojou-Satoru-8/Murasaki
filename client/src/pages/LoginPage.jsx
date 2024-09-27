@@ -1,30 +1,32 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { authActions } from "../store";
 import { Form, Link, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
-import { Divider, Input, Button } from "@nextui-org/react";
+import { Input, Button } from "@nextui-org/react";
 import Header from "../components/Header";
+import { useRedirectIfAuthenticated } from "../hooks/checkAuthHooks";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const location = useLocation();
-  console.log(location.state);
+  console.log("Location/Navigation messages: ", location.state);
   const signUpSuccessfulMessage = location.state?.message; // For sign up successful message from signup page
 
   const [message, setMessage] = useState(signUpSuccessfulMessage || "");
   const [isLoading, setIsLoading] = useState(false);
-  // On first load, there won't be any error, only sing up successful message
+  // On first load, there won't be any error, only sign up successful message
   // But on subsequent rerenders, when errors will be there, we shall show the errors only
 
-  const authState = useSelector((state) => state.auth);
-  console.log(authState);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (authState.isAuthenticated) navigate("/");
-  });
+  // NOTE: Following logic moved to checkAuthHooks.jsx:
+  // const authState = useSelector((state) => state.auth);
+  // // console.log(authState);
+  // useEffect(() => {
+  //   if (authState.isAuthenticated) navigate("/");
+  // });
+  const authState = useRedirectIfAuthenticated();
 
   useEffect(() => {
     if (message) {
@@ -39,10 +41,10 @@ const LoginPage = () => {
 
     e.preventDefault();
     const formData = new FormData(e.target);
-    console.log(formData);
-    for (const [name, value] of formData) {
-      console.log(name, value);
-    }
+    // console.log(formData);
+    // for (const [name, value] of formData) {
+    //   console.log(name, value);
+    // }
 
     const formDataObj = Object.fromEntries(formData);
     try {
@@ -52,18 +54,22 @@ const LoginPage = () => {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-      console.log(response);
+      // console.log(response);
 
       const data = await response.json();
-      console.log(data);
+
+      // console.log(data);
       // Now we're ready to show the output instead of Loading text
       setTimeout(() => {
         // NOTE: Set a timer of 1.5 seconds here, if you want the loading alert to persist for sometime
         setIsLoading(false);
-        setMessage(data.message); // Logged in successfully or incorrect email or password
-        if (data.status !== "success") return;
+        setMessage(data.message);
+        // Expected Responses with messages:
+        // Status: 200 (Logged in Successfully), 401 (Incorrect password), 404 (No such user with the email)
+        // if (data.status !== "success") return;
+        if (response.status !== 200) return;
 
-        dispatch(authActions.login({ user: data.user }));
+        dispatch(authActions.setUser({ user: data.user }));
         setTimeout(() => navigate("/"), 1000);
       }, 1500);
     } catch (err) {

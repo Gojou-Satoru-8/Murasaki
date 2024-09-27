@@ -4,6 +4,7 @@ import { Divider, Input, Button } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Form, Link, redirect, useActionData, useNavigate } from "react-router-dom";
+import { useRedirectIfAuthenticated } from "../hooks/checkAuthHooks";
 
 const validatePassword = (password, passwordConfirm) => {
   const errors = [];
@@ -16,7 +17,8 @@ const validatePassword = (password, passwordConfirm) => {
 };
 
 const SignUpPage = () => {
-  const authState = useSelector((state) => state.auth);
+  // const authState = useSelector((state) => state.auth);
+  const authState = useRedirectIfAuthenticated();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -28,9 +30,9 @@ const SignUpPage = () => {
     }
   }, [error]);
 
-  useEffect(() => {
-    if (authState.isAuthenticated) navigate("/");
-  });
+  // useEffect(() => {
+  //   if (authState.isAuthenticated) navigate("/");
+  // });
 
   const handleSignUpForm = async (e) => {
     setIsLoading(true);

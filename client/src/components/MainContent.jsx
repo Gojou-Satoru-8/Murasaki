@@ -1,5 +1,7 @@
 import Sidebar from "./Sidebar";
 const MainContent = ({ title, children }) => {
+  // console.log(sidebarItems);
+
   return (
     // <main className="w-[95%] sm:w-[4/5] mx-auto  py-8 shadow-lg">
     <main className="my-4  grid grid-cols-[25%_auto] grid-rows-1 w-full h-[85vh]">
