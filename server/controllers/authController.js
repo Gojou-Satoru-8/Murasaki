@@ -3,7 +3,7 @@ const User = require("../models/User");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
-// PATH: /signup
+// ROUTE: /signup [POST]
 exports.signup = catchAsync(async (req, res, next) => {
   console.log(req.body);
   // const { email, username, name, password, confirmPassword } = req.body;
@@ -16,7 +16,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 });
 
-// PATH: /login
+// ROUTE: /login [POST]
 exports.login = catchAsync(async (req, res, next) => {
   console.log(req.body);
   const { email, password } = req.body;
@@ -48,7 +48,7 @@ exports.login = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: "success", message: "Logged in successfully", user: userDoc });
 });
 
-// PATH: /logout
+// ROUTE: /logout [GET]
 exports.logout = catchAsync(async (req, res, next) => {
   // req.session.destroy((err) => {
   //   if (err) throw new AppError(500, "Unable to log out");
@@ -65,22 +65,24 @@ exports.logout = catchAsync(async (req, res, next) => {
   });
 });
 
+// Middleware to control access to protected routes:
 exports.checkAuth = (req, res, next) => {
   console.log("Session ID:", req.sessionID);
   console.log("Session:", req.session);
   if (req.session && req.session.user) return next();
-  else
-    return res.status(401).json({
-      status: "fail",
-      message: "User is not logged in",
-    });
+  // return res.status(401).json({
+  //   status: "fail",
+  //   message: "User is not logged in",
+  // });
+  else throw new AppError(401, "User is not authenticated");
 };
 
+// ROUTE: /current-user [GET] - To be used exclusively by client-side
 exports.getCurrentUser = (req, res, next) => {
   console.log("Session ID:", req.sessionID);
   console.log("Session:", req.session);
   res.status(200).json({
     status: "success",
-    user: req.session.user,
+    user: req.session.user, // Either a valid user object or undefined (if not authenticated)
   });
 };
