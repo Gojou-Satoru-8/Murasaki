@@ -36,7 +36,11 @@ const extractTags = (notes = []) => {
   return [...tags]; // Tags is implemented as an array, not a set
 };
 
-const initialNotesState = { notes: [], tags: [] };
+const initialNotesState = {
+  notes: [],
+  tags: [],
+  selectedTags: JSON.parse(window.localStorage.getItem("selectedTags")) || [],
+};
 const notesSlice = createSlice({
   name: "notes",
   initialState: initialNotesState,
@@ -54,6 +58,29 @@ const notesSlice = createSlice({
       const idToDelete = action.payload;
       state.notes = state.notes.filter((note) => note._id !== idToDelete);
       state.tags = extractTags(state.notes);
+    },
+    addSelectedTags: (state, action) => {
+      const tagToAdd = action.payload;
+      // const selectedTagsSet = new Set(state.selectedTags);
+      // selectedTagsSet.add(action.payload);
+      // state.selectedTags = [...selectedTagsSet];
+      if (state.selectedTags?.includes(tagToAdd)) return;
+      state.selectedTags.push(tagToAdd);
+      console.log(state.selectedTags.join(","));
+
+      // window.localStorage.setItem("selectedTags", state.selectedTags.join(","));
+      window.localStorage.setItem("selectedTags", JSON.stringify(state.selectedTags));
+    },
+    removeSelectedTags: (state, action) => {
+      const tagToDelete = action.payload;
+      state.selectedTags = state.selectedTags.filter((tag) => tag != tagToDelete);
+      // window.localStorage.setItem("selectedTags", state.selectedTags.join(","));
+      window.localStorage.setItem("selectedTags", JSON.stringify(state.selectedTags));
+    },
+    clearSelectedTags: (state, action) => {
+      state.selectedTags = [];
+      // window.localStorage.setItem("selectedTags", state.selectedTags.join(","));
+      window.localStorage.setItem("selectedTags", JSON.stringify(state.selectedTags));
     },
   },
 });

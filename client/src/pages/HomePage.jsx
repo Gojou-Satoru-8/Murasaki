@@ -15,7 +15,13 @@ const HomePage = () => {
   const notesState = useSelector((state) => state.notes);
   console.log(notesState);
 
-  const { notes } = notesState;
+  const { notes, selectedTags } = notesState;
+  // const selectedTags = window.localStorage.getItem("selectedTags").split(",");
+  let notesToDisplay;
+  if (selectedTags?.length == 0) notesToDisplay = [...notes];
+  else
+    notesToDisplay = notes.filter((note) => note.tags.some((tag) => selectedTags?.includes(tag)));
+  console.log(notesToDisplay);
 
   // const handleViewNote = async (id) => {
   //   const response = await fetch(`http://localhost:3000/notes/${id}`, {
@@ -44,8 +50,8 @@ const HomePage = () => {
     <MainContent title={notes.length === 0 ? "You have no notes" : "All Your Notes Here"}>
       {/* {isLoading && <h1 className="mt-10 text-center">Loading your notes...</h1>} */}
       <div className="mt-10 grid md:grid-cols-[repeat(3,30%)] sm:grid-cols-[repeat(2,45%)] grid-cols-1 justify-center gap-8">
-        {notes.length > 0 &&
-          notes.map((note) => (
+        {notesToDisplay?.length > 0 &&
+          notesToDisplay.map((note) => (
             <Card className="w-full hover:-translate-y-2" key={note._id}>
               <CardHeader className="justify-center">
                 <div className="flex gap-5">
