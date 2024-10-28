@@ -1,264 +1,67 @@
-import { useState, useEffect, useRef } from "react";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-
-import {
-  ClassicEditor,
-  AccessibilityHelp,
-  Autoformat,
-  AutoImage,
-  Autosave,
-  BalloonToolbar,
-  BlockQuote,
-  BlockToolbar,
-  Bold,
-  CloudServices,
-  Essentials,
-  FindAndReplace,
-  Heading,
-  ImageBlock,
-  ImageCaption,
-  ImageInline,
-  ImageInsertViaUrl,
-  ImageResize,
-  ImageStyle,
-  ImageTextAlternative,
-  ImageToolbar,
-  ImageUpload,
-  Indent,
-  IndentBlock,
-  Italic,
-  Link,
-  LinkImage,
-  List,
-  ListProperties,
-  Markdown,
-  MediaEmbed,
-  Paragraph,
-  PasteFromOffice,
-  SelectAll,
-  Table,
-  TableCaption,
-  TableCellProperties,
-  TableColumnResize,
-  TableProperties,
-  TableToolbar,
-  TextTransformation,
-  TodoList,
-  Underline,
-  Undo,
-} from "ckeditor5";
-
-import "ckeditor5/ckeditor5.css";
-
-import "./editor.css";
-
+import { useRef } from "react";
+import { Editor } from "@tinymce/tinymce-react";
+// import { Button } from "@nextui-org/react";
 export default function NoteEditor({ noteContent, setNoteContent }) {
-  const editorContainerRef = useRef(null);
-  const editorRef = useRef(null);
-  const [isLayoutReady, setIsLayoutReady] = useState(false);
-
-  useEffect(() => {
-    setIsLayoutReady(true);
-
-    return () => setIsLayoutReady(false);
-  }, []);
-
-  const editorConfig = {
-    toolbar: {
-      items: [
-        "undo",
-        "redo",
-        "|",
-        "findAndReplace",
-        "|",
-        "heading",
-        "|",
-        "bold",
-        "italic",
-        "underline",
-        "|",
-        "link",
-        "mediaEmbed",
-        "insertTable",
-        "blockQuote",
-        "|",
-        "bulletedList",
-        "numberedList",
-        "todoList",
-        "outdent",
-        "indent",
-      ],
-      shouldNotGroupWhenFull: false,
-    },
-    plugins: [
-      AccessibilityHelp,
-      Autoformat,
-      AutoImage,
-      Autosave,
-      BalloonToolbar,
-      BlockQuote,
-      BlockToolbar,
-      Bold,
-      CloudServices,
-      Essentials,
-      FindAndReplace,
-      Heading,
-      ImageBlock,
-      ImageCaption,
-      ImageInline,
-      ImageInsertViaUrl,
-      ImageResize,
-      ImageStyle,
-      ImageTextAlternative,
-      ImageToolbar,
-      ImageUpload,
-      Indent,
-      IndentBlock,
-      Italic,
-      Link,
-      LinkImage,
-      List,
-      ListProperties,
-      Markdown,
-      MediaEmbed,
-      Paragraph,
-      PasteFromOffice,
-      SelectAll,
-      Table,
-      TableCaption,
-      TableCellProperties,
-      TableColumnResize,
-      TableProperties,
-      TableToolbar,
-      TextTransformation,
-      TodoList,
-      Underline,
-      Undo,
-    ],
-    balloonToolbar: ["bold", "italic", "|", "link", "|", "bulletedList", "numberedList"],
-    blockToolbar: [
-      "bold",
-      "italic",
-      "|",
-      "link",
-      "insertTable",
-      "|",
-      "bulletedList",
-      "numberedList",
-      "outdent",
-      "indent",
-    ],
-    heading: {
-      options: [
-        {
-          model: "paragraph",
-          title: "Paragraph",
-          class: "ck-heading_paragraph",
-        },
-        {
-          model: "heading1",
-          view: "h1",
-          title: "Heading 1",
-          class: "ck-heading_heading1",
-        },
-        {
-          model: "heading2",
-          view: "h2",
-          title: "Heading 2",
-          class: "ck-heading_heading2",
-        },
-        {
-          model: "heading3",
-          view: "h3",
-          title: "Heading 3",
-          class: "ck-heading_heading3",
-        },
-        {
-          model: "heading4",
-          view: "h4",
-          title: "Heading 4",
-          class: "ck-heading_heading4",
-        },
-        {
-          model: "heading5",
-          view: "h5",
-          title: "Heading 5",
-          class: "ck-heading_heading5",
-        },
-        {
-          model: "heading6",
-          view: "h6",
-          title: "Heading 6",
-          class: "ck-heading_heading6",
-        },
-      ],
-    },
-    image: {
-      toolbar: [
-        "toggleImageCaption",
-        "imageTextAlternative",
-        "|",
-        "imageStyle:inline",
-        "imageStyle:wrapText",
-        "imageStyle:breakText",
-        "|",
-        "resizeImage",
-      ],
-    },
-    initialData: noteContent.at(0),
-    link: {
-      addTargetToExternalLinks: true,
-      defaultProtocol: "https://",
-      decorators: {
-        toggleDownloadable: {
-          mode: "manual",
-          label: "Downloadable",
-          attributes: {
-            download: "file",
-          },
-        },
-      },
-    },
-    list: {
-      properties: {
-        styles: true,
-        startIndex: true,
-        reversed: true,
-      },
-    },
-    placeholder: "Type or paste your content here!",
-    table: {
-      contentToolbar: [
-        "tableColumn",
-        "tableRow",
-        "mergeTableCells",
-        "tableProperties",
-        "tableCellProperties",
-      ],
-    },
+  const handleNoteChange = (value) => {
+    // console.log(editorRef.current.getContent());
+    setNoteContent(value); // Or: setNoteContent(editorRef.current.getContent());
   };
-
+  const editorRef = useRef(null);
   return (
-    <div>
-      <div className="">
-        <div className="" ref={editorContainerRef}>
-          <div className="">
-            <div ref={editorRef}>
-              {isLayoutReady && (
-                <CKEditor
-                  editor={ClassicEditor}
-                  config={editorConfig}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    setNoteContent(data);
-                    console.log("Editor content:", data);
-                  }}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <>
+      <Editor
+        apiKey="nxd76ujztoydqvlx0i5dk8q76oedjp6zxp54tm72ak8fe19c"
+        // ref={editorRef}  // Native method below:
+        onInit={(_evt, editor) => {
+          editorRef.current = editor;
+        }}
+        init={{
+          plugins: [
+            "preview",
+            // "importcss",
+            "searchreplace",
+            "autolink",
+            // "autosave",
+            "save",
+            // "directionality",
+            "code",
+            "visualblocks",
+            "visualchars",
+            "fullscreen",
+            "image",
+            "link",
+            "media",
+            "codesample",
+            "table",
+            "charmap",
+            "pagebreak",
+            // "nonbreaking",
+            "anchor",
+            "insertdatetime",
+            // "advlist",
+            "lists",
+            "wordcount",
+            "help",
+            "quickbars",
+            "emoticons",
+            "accordion",
+          ],
+          toolbar:
+            "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | accordion accordionremove| link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons insertdatetime | fullscreen preview | save print | pagebreak anchor codesample",
+          // advlist_bullet_styles: "square",
+          help_tabs: ["shortcuts", "keyboardnav", "versions"],
+          height: "500px",
+          save_onsavecallback: () => {
+            handleNoteChange(editorRef.current.getContent());
+          },
+        }}
+        value={noteContent}
+        onEditorChange={(value, editor) => {
+          handleNoteChange(value);
+          // console.log(value === editor.getContent());   // true;
+        }}
+      />
+      {/* <Button onClick={handleNoteChange}>Save</Button> */}
+    </>
   );
 }

@@ -12,7 +12,7 @@ const LoginPage = () => {
   const dispatch = useDispatch();
 
   const location = useLocation();
-  console.log("Location/Navigation messages: ", location.state);
+  // console.log("Location/Navigation messages: ", location.state);
   const signUpSuccessfulMessage = location.state?.message; // For sign up successful message from signup page
 
   const [message, setMessage] = useState(signUpSuccessfulMessage || "");

@@ -6,7 +6,8 @@ import MainContent from "../components/MainContent";
 import NoteEditor from "../components/NoteEditor";
 import CodeEditor from "../components/CodeEditor";
 import Tags from "../components/Tags";
-import { notesActions } from "../store";
+import EvalModal from "../components/EvalModal";
+import { authActions, notesActions } from "../store";
 
 const NotePage = () => {
   const dispatch = useDispatch();
@@ -46,15 +47,22 @@ const NotePage = () => {
       const data = await response.json();
       console.log(data);
 
-      if (!response.ok) throw new json({ status: response.status, message: data.message });
+      // For unauthorized error:
+      if (response.status === 401) {
+        dispatch(authActions.unsetUser());
+        dispatch(notesActions.setNotes({ notes: [] }));
+        navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
+        return;
+      } else if (!response.ok) alert(`Could not populate current note with id ${params.id}`); // For all other errors:
+
       const { note } = data;
       setTitle(note.title);
       setTags(note.tags);
-      setNoteContent(note.noteContent);
+      setNoteContent(note.noteContent.at(0));
       setCodeContent(note.codeContent);
     };
     fetchNoteDetails();
-  }, [params.id]);
+  }, [dispatch, navigate, params.id]);
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleNoteSave = async () => {
@@ -83,7 +91,7 @@ const NotePage = () => {
       }
       setSaveText(data.message);
       // Saving the created note to redux, to prevent additional fetch for reflecting the added note in homepage:
-      dispatch(notesActions.addNote({ note: data.note }));
+      dispatch(notesActions.updateNote({ note: data.note }));
 
       setTimeout(() => {
         setSaveText("");
@@ -127,6 +135,7 @@ const NotePage = () => {
           >
             Go Back
           </Button>
+          <EvalModal />
         </div>
       </div>
     </MainContent>

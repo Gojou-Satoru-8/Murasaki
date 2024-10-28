@@ -1,9 +1,10 @@
 // import { useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import MainContent from "../components/MainContent";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { Card, CardHeader, CardBody, Button, CardFooter } from "@nextui-org/react";
 import { useSelector, useDispatch } from "react-redux";
+import usePopulateNotes from "../hooks/notesHooks";
 // import { useRedirectIfNotAuthenticated } from "../hooks/checkAuthHooks";
 
 import { notesActions } from "../store";
@@ -12,16 +13,16 @@ const HomePage = () => {
   // const authState = useRedirectIfNotAuthenticated();
   // console.log(authState);
   const dispatch = useDispatch();
-  const notesState = useSelector((state) => state.notes);
-  console.log(notesState);
+  const notesState = usePopulateNotes();
+  console.log("Notes-state: ", notesState);
 
   const { notes, selectedTags } = notesState;
   // const selectedTags = window.localStorage.getItem("selectedTags").split(",");
-  let notesToDisplay;
+  let notesToDisplay = [];
   if (selectedTags?.length == 0) notesToDisplay = [...notes];
   else
     notesToDisplay = notes.filter((note) => note.tags.some((tag) => selectedTags?.includes(tag)));
-  console.log(notesToDisplay);
+  // console.log(notesToDisplay);
 
   // const handleViewNote = async (id) => {
   //   const response = await fetch(`http://localhost:3000/notes/${id}`, {

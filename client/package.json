@@ -19,6 +19,7 @@
     "@milkdown/theme-nord": "^7.5.0",
     "@nextui-org/react": "^2.4.6",
     "@reduxjs/toolkit": "^2.2.7",
+    "@tinymce/tinymce-react": "^5.1.1",
     "@uiw/codemirror-extensions-langs": "^4.23.0",
     "@uiw/codemirror-theme-atomone": "^4.23.0",
     "@uiw/codemirror-theme-dracula": "^4.23.0",
