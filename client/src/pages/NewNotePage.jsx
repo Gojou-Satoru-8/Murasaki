@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input, Textarea } from "@nextui-org/react";
 import MainContent from "../components/MainContent";
 import NoteEditor from "../components/NoteEditor";
 import CodeEditor from "../components/CodeEditor";
 import Tags from "../components/Tags";
-import { notesActions } from "../store";
+import EvalModalButton from "../components/EvalModalButton";
+import { notesActions, authActions } from "../store";
 
 const NewNotePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [title, setTitle] = useState("");
+  const [summary, setSummary] = useState("");
   const [tags, setTags] = useState([]);
   const [noteContent, setNoteContent] = useState("");
   const [codeContent, setCodeContent] = useState("// Your code here");
@@ -30,6 +32,7 @@ const NewNotePage = () => {
   // });
 
   const handleTitleChange = (e) => setTitle(e.target.value);
+  const handleSummaryChange = (e) => setSummary(e.target.value);
   const handleNoteSave = async () => {
     // Send http POST request:
     setSaveText("Saving! Please wait :)");
@@ -40,19 +43,23 @@ const NewNotePage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
+          summary,
           tags,
           noteContent,
           codeContent,
         }),
       });
 
+      if (!response.ok) console.log("Request sent but unfavourable response");
       const data = await response.json();
       console.log(data);
-      if (!response.ok) console.log("Request sent but unfavourable response");
       // Expected responses:
       // status 401: User not logged in, status 201: Note created, and status 500: Unable to save note
       // NOTE: response.ok is true for 201 Created also
       if (response.status === 401) {
+        dispatch(authActions.unsetUser());
+        // dispatch(notesActions.setNotes({ notes: [] }));
+        dispatch(notesActions.clearAll());
         navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
         return;
       }
@@ -82,10 +89,22 @@ const NewNotePage = () => {
           type="text"
           value={title}
           onChange={handleTitleChange}
-          placeholder="Note Title"
+          label="Title"
+          labelPlacement="outside"
+          // variant="underlined"
           required
+          classNames={{ input: "text-center" }}
         ></Input>
-
+        <Textarea
+          size=""
+          type="text"
+          value={summary}
+          onChange={handleSummaryChange}
+          label="Summary"
+          labelPlacement="outside"
+          variant="underlined"
+          // required
+        />
         <Tags tags={tags} setTags={setTags}></Tags>
 
         <NoteEditor noteContent={noteContent} setNoteContent={setNoteContent} />
@@ -102,6 +121,7 @@ const NewNotePage = () => {
           >
             Cancel
           </Button>
+          <EvalModalButton codeContent={codeContent} />
         </div>
       </div>
     </MainContent>
