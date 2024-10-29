@@ -18,7 +18,7 @@ const usePopulateNotes = () => {
       if (response.status === 401) {
         // navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
         dispatch(authActions.unsetUser());
-        dispatch(notesActions.setNotes({ notes: [] }));
+        dispatch(notesActions.clearAll());
         navigate("/log-in");
         return;
         // NOTE: usePopulateNotes hook follows the RedirectIfNotAuthenticated Hook, which means that if this hook runs,

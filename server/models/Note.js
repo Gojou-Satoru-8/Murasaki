@@ -10,6 +10,10 @@ const noteSchema = new mongoose.Schema({
     type: String,
     required: [true, "Title is a required field"],
   },
+  summary: {
+    type: String,
+    // required: [true, "Please provide a summary"],
+  },
   tags: [String],
   noteContent: {
     type: [Object],

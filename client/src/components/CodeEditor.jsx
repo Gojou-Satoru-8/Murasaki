@@ -15,15 +15,14 @@ import { atomone } from "@uiw/codemirror-theme-atomone";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 
 const editorStyle = {
-  fontSize: "14px", // Adjust this value as needed
+  fontSize: "15px", // Adjust this value as needed
 };
 
-const CodeEditor = ({ codeContent, setCodeContent }) => {
+const CodeEditor = ({ codeContent, setCodeContent, editorOptions }) => {
   // const [codeContents, setCodeContents] = useState("// Your code here");
   const handleChangeContent = (val, viewUpdate) => {
     // console.log("val:", val);
     // console.log(viewUpdate);
-
     setCodeContent(val);
   };
 
@@ -37,6 +36,7 @@ const CodeEditor = ({ codeContent, setCodeContent }) => {
       extensions={[python()]}
       onChange={handleChangeContent}
       style={editorStyle}
+      {...editorOptions}
     />
   );
 };

@@ -6,7 +6,7 @@ import MainContent from "../components/MainContent";
 import NoteEditor from "../components/NoteEditor";
 import CodeEditor from "../components/CodeEditor";
 import Tags from "../components/Tags";
-import EvalModal from "../components/EvalModal";
+import EvalModalButton from "../components/EvalModalButton";
 import { authActions, notesActions } from "../store";
 
 const NotePage = () => {
@@ -135,7 +135,7 @@ const NotePage = () => {
           >
             Go Back
           </Button>
-          <EvalModal />
+          <EvalModalButton codeContent={codeContent} />
         </div>
       </div>
     </MainContent>

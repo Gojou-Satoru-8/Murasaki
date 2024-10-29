@@ -69,6 +69,14 @@ const notesSlice = createSlice({
       state.notes = state.notes.filter((note) => note._id !== idToDelete);
       state.tags = extractTags(state.notes);
     },
+    clearAll: (state, action) => {
+      // (1) Set notes to [], and tags too
+      state.notes = [];
+      state.tags = extractTags(state.notes);
+      // (2) Set selectedTags to [], and update the localStorage
+      state.selectedTags = [];
+      window.localStorage.removeItem("selectedTags");
+    },
     addSelectedTags: (state, action) => {
       const tagToAdd = action.payload;
       // const selectedTagsSet = new Set(state.selectedTags);
@@ -90,7 +98,8 @@ const notesSlice = createSlice({
     clearSelectedTags: (state, action) => {
       state.selectedTags = [];
       // window.localStorage.setItem("selectedTags", state.selectedTags.join(","));
-      window.localStorage.setItem("selectedTags", JSON.stringify(state.selectedTags));
+      // window.localStorage.setItem("selectedTags", JSON.stringify(state.selectedTags));
+      window.localStorage.removeItem("selectedTags");
     },
   },
 });

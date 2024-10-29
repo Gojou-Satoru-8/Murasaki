@@ -1,0 +1,1 @@
+javac program.java && java program
