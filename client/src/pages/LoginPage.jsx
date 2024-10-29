@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { authActions } from "../store";
 import { Form, Link, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { Input, Button } from "@nextui-org/react";
 import Header from "../components/Header";
+import { MailIcon } from "../assets/MailIcon";
+import { EyeSlashFilledIcon, EyeFilledIcon } from "../assets/EyeIconsPassword";
+
+import { authActions } from "../store";
 import { useRedirectIfAuthenticated } from "../hooks/checkAuthHooks";
 
 const LoginPage = () => {
@@ -17,6 +20,7 @@ const LoginPage = () => {
 
   const [message, setMessage] = useState(signUpSuccessfulMessage || "");
   const [isLoading, setIsLoading] = useState(false);
+  const [eyeIconVisible, setEyeIconVisible] = useState(false);
   // On first load, there won't be any error, only sign up successful message
   // But on subsequent rerenders, when errors will be there, we shall show the errors only
 
@@ -35,6 +39,7 @@ const LoginPage = () => {
     }
   }, [message]);
 
+  const toggleEyeIconVisibility = () => setEyeIconVisible((prev) => !prev);
   const handleLoginForm = async (e) => {
     setIsLoading(true);
     setMessage("");
@@ -97,10 +102,41 @@ const LoginPage = () => {
           </CardHeader>
           {/* <Form action="/login" method="POST"> */}
           <Form method="POST" onSubmit={handleLoginForm}>
-            <CardBody className="px-20 gap-6 justify-center ">
-              <Input type="email" name="email" placeholder="user@example.com" required></Input>
-              <Input type="password" name="password" placeholder="Password" required></Input>
-              <div className="flex flex-row justify-center gap-8">
+            <CardBody className="px-20 gap-3 justify-center ">
+              <Input
+                type="email"
+                name="email"
+                label="Email"
+                labelPlacement="outside"
+                size="lg"
+                endContent={
+                  <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0 m-auto" />
+                }
+                required
+              ></Input>
+              <Input
+                type={eyeIconVisible ? "text" : "password"}
+                name="password"
+                label="Password"
+                labelPlacement="outside"
+                size="lg"
+                endContent={
+                  <button
+                    className="focus:outline-none m-auto"
+                    type="button"
+                    onClick={toggleEyeIconVisibility}
+                    aria-label="toggle password visibility"
+                  >
+                    {eyeIconVisible ? (
+                      <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                    ) : (
+                      <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                    )}
+                  </button>
+                }
+                required
+              ></Input>
+              <div className="flex flex-row justify-center gap-8 pt-2">
                 <Button type="reset" color="danger">
                   Reset
                 </Button>

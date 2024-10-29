@@ -21,15 +21,15 @@ const Tags = ({ tags, setTags }) => {
   console.log(tags);
 
   return (
-    <>
-      <div className="flex gap-2 justify-center">
+    <div className="flex justify-center gap-10">
+      <div className="flex gap-2 justify-end basis-1/2 flex-wrap">
         {tags?.map((tag, index) => (
           <Chip key={index} onClose={() => handleRemoveTag(tag)} variant="flat">
             {tag}
           </Chip>
         ))}
       </div>
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-start gap-4 basis-1/2">
         <Input
           size="sm"
           type="text"
@@ -44,7 +44,7 @@ const Tags = ({ tags, setTags }) => {
           Add Tag
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -4,8 +4,9 @@ import { Divider, Input, Button } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Form, Link, redirect, useActionData, useNavigate } from "react-router-dom";
+import { MailIcon } from "../assets/MailIcon";
+import { EyeFilledIcon, EyeSlashFilledIcon } from "../assets/EyeIconsPassword";
 import { useRedirectIfAuthenticated } from "../hooks/checkAuthHooks";
-
 const validatePassword = (password, passwordConfirm) => {
   const errors = [];
   if (password.length < 8 || password.length > 15)
@@ -21,6 +22,7 @@ const SignUpPage = () => {
   const authState = useRedirectIfAuthenticated();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [eyeIconVisible, setEyeIconVisible] = useState({ password: false, passwordConfirm: false });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +36,12 @@ const SignUpPage = () => {
   //   if (authState.isAuthenticated) navigate("/");
   // });
 
+  const toggleEyeIconVisibility = (key) => {
+    setEyeIconVisible((prev) => {
+      // console.log(key, prev[key]);
+      return { ...prev, [key]: !prev[key] };
+    });
+  };
   const handleSignUpForm = async (e) => {
     setIsLoading(true);
     setError("");
@@ -97,19 +105,60 @@ const SignUpPage = () => {
           </CardHeader>
           <Form method="POST" onSubmit={handleSignUpForm}>
             <CardBody className="px-20 gap-6 justify-center ">
-              <Input type="email" name="email" placeholder="user@example.com" required></Input>
               <Input
-                type="username"
-                name="username"
-                placeholder="Your username here"
+                type="email"
+                name="email"
+                label="Email"
+                endContent={
+                  <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0 m-auto" />
+                }
                 required
               ></Input>
-              <Input type="name" name="name" placeholder="Your Name here" required></Input>
-              <Input type="password" name="password" placeholder="Password" required></Input>
+              <Input type="username" name="username" label="User Name" required></Input>
               <Input
-                type="password"
+                type="name"
+                name="name"
+                label="Name (First Name and Last Name)"
+                required
+              ></Input>
+              <Input
+                type={eyeIconVisible.password ? "text" : "password"}
+                name="password"
+                label="Password"
+                endContent={
+                  <button
+                    className="focus:outline-none m-auto"
+                    type="button"
+                    onClick={(e) => toggleEyeIconVisibility("password")}
+                    aria-label="toggle password visibility"
+                  >
+                    {eyeIconVisible.password ? (
+                      <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                    ) : (
+                      <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                    )}
+                  </button>
+                }
+                required
+              ></Input>
+              <Input
+                type={eyeIconVisible.passwordConfirm ? "text" : "password"}
                 name="passwordConfirm"
-                placeholder="Confirm Password"
+                label="Confirm Password"
+                endContent={
+                  <button
+                    className="focus:outline-none m-auto"
+                    type="button"
+                    onClick={(e) => toggleEyeIconVisibility("passwordConfirm")}
+                    aria-label="toggle password visibility"
+                  >
+                    {eyeIconVisible.passwordConfirm ? (
+                      <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                    ) : (
+                      <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                    )}
+                  </button>
+                }
                 required
               ></Input>
               <div className="flex flex-row justify-center gap-8">
