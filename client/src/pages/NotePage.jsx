@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate, useParams, json } from "react-router-dom";
+import { useLocation, useNavigate, useParams, json, useNavigation } from "react-router-dom";
 import { Button, Input, Textarea } from "@nextui-org/react";
 import MainContent from "../components/MainContent";
 import NoteEditor from "../components/NoteEditor";
@@ -9,7 +9,9 @@ import Tags from "../components/Tags";
 import EvalModalButton from "../components/EvalModalButton";
 import { authActions, notesActions } from "../store";
 
-const NotePage = () => {
+const NotePage = ({ isNew }) => {
+  console.log("New Note:", isNew);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const params = useParams();
@@ -66,17 +68,20 @@ const NotePage = () => {
       setNoteContent(note.noteContent.at(0));
       setCodeContent(note.codeContent);
     };
-    fetchNoteDetails();
-  }, [dispatch, navigate, params.id]);
+    if (!isNew) fetchNoteDetails();
+  }, [dispatch, navigate, params.id, isNew]);
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleSummaryChange = (e) => setSummary(e.target.value);
   const handleNoteSave = async () => {
-    // Send http PATCH request:
-    setSaveText("Updating! Please wait :)");
+    // Send http POST request if isNew, else PATCH request for updating existing note:
+
+    setSaveText(`${isNew ? "Saving" : "Updating"}! Please wait :)`);
     try {
-      const response = await fetch(`http://localhost:3000/notes/${params.id}`, {
-        method: "PATCH",
+      let URL = "http://localhost:3000/notes/";
+      if (!isNew) URL += params.id;
+      const response = await fetch(URL, {
+        method: isNew ? "POST" : "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -102,11 +107,14 @@ const NotePage = () => {
       setSaveText(data.message);
       // Saving the created note to redux, to prevent additional fetch for reflecting the added note in homepage:
       dispatch(notesActions.updateNote({ note: data.note }));
-      dispatch(notesActions.clearSelectedTags()); // In case the note is updated by removing a selected tag
-      setTimeout(() => {
+      // In case the note is updated by removing a selected tag, this may cause UI inconsistency
+      if (!isNew) dispatch(notesActions.clearSelectedTags());
+      if (isNew) {
+        // setTimeout(() => {
         setSaveText("");
-        navigate("/");
-      }, 3000);
+        navigate(`/notes/${data.note._id}`);
+        // }, 1000);
+      } else setTimeout(() => setSaveText(""), 2000);
     } catch (err) {
       console.log(err.message);
     }
@@ -122,7 +130,7 @@ const NotePage = () => {
       <div className="flex flex-col gap-4 justify-center">
         <Input
           size="lg"
-          classNames={{ input: "text-center" }}
+          classNames={{ input: "text-center text-3xl" }}
           type="text"
           value={title}
           onChange={handleTitleChange}
@@ -156,7 +164,7 @@ const NotePage = () => {
               navigate("/");
             }}
           >
-            Go Back
+            {isNew ? "Cancel" : "Go Back"}
           </Button>
           <EvalModalButton codeContent={codeContent} />
         </div>

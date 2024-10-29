@@ -10,6 +10,12 @@ import usePopulateNotes from "../hooks/notesHooks";
 
 import { notesActions } from "../store";
 
+const stripHtml = (html) => {
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+  return temp.textContent || temp.innerText || "";
+};
+
 const HomePage = () => {
   // const authState = useRedirectIfNotAuthenticated();
   // console.log(authState);
@@ -78,7 +84,8 @@ const HomePage = () => {
               </CardHeader>
               <CardBody>
                 <ScrollShadow hideScrollBar size={30}>
-                  <p className="text-sm">{note.summary}</p>
+                  {/* {stripHtml(note.noteContent)} */}
+                  <div className="text-sm">{note.summary}</div>
                 </ScrollShadow>
               </CardBody>
               <CardFooter className="justify-evenly">
