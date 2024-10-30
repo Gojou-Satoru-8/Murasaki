@@ -23,7 +23,7 @@ const HomePage = () => {
   // console.log(authState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const notesState = usePopulateNotes();
+  const notesState = useSelector((state) => state.notes);
   console.log("Notes-state: ", notesState);
 
   const { notes, selectedTags } = notesState;

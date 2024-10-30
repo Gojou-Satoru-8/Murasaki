@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams, json, useNavigation } from "react-router-dom";
 import { Button, Input, Textarea } from "@nextui-org/react";
 import MainLayout from "../components/MainLayout";
@@ -17,7 +17,14 @@ const NotePage = ({ isNew }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const params = useParams();
+  const currentNote = useSelector((state) => {
+    const { notes } = state.notes; // state.notes gives the notesState object, which has a key called notes
+    // console.log("notes inside useSelector:", notes);
+    return notes.find((note) => note._id === params.id);
+    // params.id is undefined so it will return undefined for currentNote
+  });
   // console.log(params);
+  console.log("Current note: ", currentNote);
 
   // const location = useLocation();
   // console.log(location.state);
@@ -45,33 +52,43 @@ const NotePage = ({ isNew }) => {
   //   }
   // }, [authState.isAuthenticated, navigate]);
 
+  // useEffect(() => {
+  //   const fetchNoteDetails = async () => {
+  //     const response = await fetch(`http://localhost:3000/notes/${params.id}`, {
+  //       credentials: "include",
+  //     });
+  //     console.log(response);
+  //     const data = await response.json();
+  //     console.log(data);
+
+  //     // For unauthorized error:
+  //     if (response.status === 401) {
+  //       dispatch(authActions.unsetUser());
+  //       // dispatch(notesActions.setNotes({ notes: [] }));
+  //       dispatch(notesActions.clearAll());
+  //       navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
+  //       return;
+  //     } else if (!response.ok) alert(`Could not populate current note with id ${params.id}`); // For all other errors:
+
+  //     const { note } = data;
+  //     setTitle(note.title);
+  //     setSummary(note.summary ?? "");
+  //     setTags(note.tags);
+  //     setNoteContent(note.noteContent.at(0));
+  //     setCodeContent(note.codeContent);
+  //   };
+  //   if (!isNew) fetchNoteDetails();
+  // }, [dispatch, navigate, params.id, isNew]);
+
   useEffect(() => {
-    const fetchNoteDetails = async () => {
-      const response = await fetch(`http://localhost:3000/notes/${params.id}`, {
-        credentials: "include",
-      });
-      console.log(response);
-      const data = await response.json();
-      console.log(data);
-
-      // For unauthorized error:
-      if (response.status === 401) {
-        dispatch(authActions.unsetUser());
-        // dispatch(notesActions.setNotes({ notes: [] }));
-        dispatch(notesActions.clearAll());
-        navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
-        return;
-      } else if (!response.ok) alert(`Could not populate current note with id ${params.id}`); // For all other errors:
-
-      const { note } = data;
-      setTitle(note.title);
-      setSummary(note.summary ?? "");
-      setTags(note.tags);
-      setNoteContent(note.noteContent.at(0));
-      setCodeContent(note.codeContent);
-    };
-    if (!isNew) fetchNoteDetails();
-  }, [dispatch, navigate, params.id, isNew]);
+    if (!isNew && currentNote) {
+      setTitle(currentNote.title);
+      setSummary(currentNote.summary);
+      setTags(currentNote.tags);
+      setNoteContent(currentNote.noteContent.at(0));
+      setCodeContent(currentNote.codeContent);
+    }
+  }, [isNew, currentNote]);
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleSummaryChange = (e) => setSummary(e.target.value);

@@ -5,7 +5,7 @@ import { useRedirectIfNotAuthenticated } from "../hooks/checkAuthHooks";
 import usePopulateNotes from "../hooks/notesHooks";
 const RootLayout = () => {
   const authState = useRedirectIfNotAuthenticated();
-
+  const notesState = usePopulateNotes();
   return (
     <>
       <Header />
