@@ -6,10 +6,11 @@ import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import Root from "./pages/RootLayout";
 import HomePage from "./pages/HomePage";
 import NotePage from "./pages/NotePage";
-import NewNotePage from "./pages/NewNotePage";
+// import NewNotePage from "./pages/NewNotePage";
 import ErrorPage from "./pages/ErrorPage";
 import RegisterPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
+import SettingsPage from "./pages/Settings";
 // import { useDispatch, useSelector } from "react-redux";
 // import { useState, useEffect } from "react";
 // import { authActions } from "./store";
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "/new-note",
         element: <NotePage isNew />,
+      },
+      {
+        path: "/settings",
+        element: <SettingsPage />,
       },
     ],
   },

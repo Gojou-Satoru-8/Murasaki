@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { authActions } from "../store";
+import { authActions, notesActions } from "../store";
 
 const useGetCurrentUser = () => {
   const authState = useSelector((state) => state.auth);
@@ -11,9 +11,15 @@ const useGetCurrentUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:3000/current-user", {
+        const response = await fetch("http://localhost:3000/user", {
           credentials: "include",
         });
+        console.log(response);
+        if (response.status === 401) {
+          dispatch(authActions.unsetUser()); // Not explicitly needed but reassuring to keep states consistent
+          dispatch(notesActions.clearAll());
+          return;
+        }
         const data = await response.json();
         // console.log(data);
 

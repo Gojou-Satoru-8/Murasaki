@@ -118,7 +118,7 @@ const HomePage = () => {
               </CardFooter> */}
                 {/* <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between"> */}
                 <CardFooter className="py-1 overflow-auto">
-                  <div className="w-full flex flex-wrap gap-2 justify-center">
+                  <div className="w-full flex flex-wrap gap-2 justify-center m-auto">
                     {note.tags?.map((tag, index) => (
                       <Chip key={index} variant="flat">
                         {tag}

@@ -9,15 +9,18 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
+  Button,
 } from "@nextui-org/react";
 import { SearchIcon } from "./SearchIcon.jsx";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { authActions, notesActions } from "../store/index.js";
 import { useState } from "react";
 
 const Header = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleLogout = async () => {
     try {
@@ -80,13 +83,19 @@ const Header = () => {
                 src={authState.user?.profilePic}
               />
             </DropdownTrigger>
-            <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">{authState.user ? "Signed in as" : "Not Signed in"}</p>
-                <p className="font-semibold">{authState.user && authState.user.email}</p>
+            <DropdownMenu aria-label="Profile Actions" variant="solid">
+              {/* <DropdownItem key="profile" className="h-14 gap-2">
+                {authState.user ? `Signed in as ${authState.user.email}` : "Not Signed in"}
+              </DropdownItem> */}
+              <DropdownItem
+                key="settings"
+                onClick={() => {
+                  navigate("/settings");
+                }}
+              >
+                My Settings
               </DropdownItem>
-              <DropdownItem key="settings">My Settings</DropdownItem>
-              {/* <DropdownItem key="configurations">Configurations</DropdownItem> */}
+
               <DropdownItem key="logout" color="danger" onClick={handleLogout}>
                 Log Out
               </DropdownItem>

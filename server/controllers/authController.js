@@ -86,3 +86,31 @@ exports.getCurrentUser = (req, res, next) => {
     user: req.session.user, // Either a valid user object or undefined (if not authenticated)
   });
 };
+
+exports.updateCurrentUser = catchAsync(async (req, res, next) => {
+  console.log(req.url, req.method, req.body);
+  const { username, name } = req.body; // Only accenting username and name
+  const updatedUser = await User.findByIdAndUpdate(
+    req.session.user._id,
+    { username, name },
+    { new: true, runValidators: true }
+  );
+
+  console.log(updatedUser);
+  if (!updatedUser) throw new AppError(404, "No such user found!");
+
+  return res.status(200).json({
+    status: "success",
+    message: "User information updated successfully",
+    user: updatedUser,
+  });
+});
+
+exports.deleteCurrentUser = catchAsync(async (req, res, next) => {
+  await User.findByIdAndDelete(req.session.user._id);
+  next();
+  // res.status(204).json({
+  //   status: "success",
+  //   message: "Deleted Successfully",
+  // });
+});

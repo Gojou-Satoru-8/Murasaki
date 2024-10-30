@@ -2,6 +2,8 @@ import { Divider, Button } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import NoteIcon from "../assets/pen.png";
 import HomeIcon from "../assets/home.png";
+// import { GearIcon } from "../assets/GearIcon";
+import SettingsIcon from "../assets/settings.png";
 import CloseIcon from "../assets/close (1).png";
 import { useDispatch, useSelector } from "react-redux";
 import { notesActions } from "../store";
@@ -33,7 +35,7 @@ const SidebarHome = ({ styles }) => {
           <Link to="/">
             <Button
               color="secondary"
-              variant="light"
+              variant="flat"
               className="w-[80%]"
               startContent={<img src={HomeIcon}></img>}
             >
@@ -41,9 +43,18 @@ const SidebarHome = ({ styles }) => {
             </Button>
           </Link>
         </div>
-        {/* <div className="py-2">
-          <Link to="/"></Link>
-        </div> */}
+        <div className="py-2 text-center">
+          <Link to="/settings">
+            <Button
+              color="secondary"
+              variant="light"
+              className="w-[80%]"
+              startContent={<img width="22px" src={SettingsIcon}></img>}
+            >
+              Settings
+            </Button>
+          </Link>
+        </div>
       </div>
       <Divider />
       <div className="h-[70%] mx-2 my-6 flex flex-col justify-start gap-4 overflow-auto">
