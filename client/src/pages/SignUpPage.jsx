@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Form, Link, redirect, useActionData, useNavigate } from "react-router-dom";
 import { MailIcon } from "../assets/MailIcon";
+import { UserIcon } from "../assets/UserIcon";
 import { EyeFilledIcon, EyeSlashFilledIcon } from "../assets/EyeIconsPassword";
 import { useRedirectIfAuthenticated } from "../hooks/checkAuthHooks";
 const validatePassword = (password, passwordConfirm) => {
@@ -114,7 +115,13 @@ const SignUpPage = () => {
                 }
                 required
               ></Input>
-              <Input type="username" name="username" label="User Name" required></Input>
+              <Input
+                type="username"
+                name="username"
+                label="User Name"
+                endContent={<UserIcon className="m-auto" />}
+                required
+              ></Input>
               <Input
                 type="name"
                 name="name"

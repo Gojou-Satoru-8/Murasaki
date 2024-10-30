@@ -29,6 +29,8 @@ const usePopulateNotes = () => {
 
       if (response.status === 404) {
         console.warn("No notes found:", data.message);
+        // dispatch(notesActions.clearAll()); // Or just below works since notes are already empty array []
+        dispatch(notesActions.clearSelectedTags());
         return;
       }
 

@@ -98,7 +98,9 @@ export default function EvalModalButton({ codeContent }) {
   return (
     <>
       {/* <Button onPress={onOpen}>Run Code</Button> */}
-      <Button onPress={handleOpenCodeModal}>Run Code</Button>
+      <Button color="success" variant="flat" onPress={handleOpenCodeModal}>
+        Run Code
+      </Button>
       <Modal
         backdrop="opaque"
         isOpen={isOpen}

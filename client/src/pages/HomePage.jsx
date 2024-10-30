@@ -1,8 +1,10 @@
 // import { useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import MainContent from "../components/MainContent";
+import MainLayout from "../components/MainLayout";
+import SidebarHome from "../components/SidebarHome";
+import Content from "../components/Content";
 // import { useEffect, useState } from "react";
-import { Card, CardHeader, CardBody, Button, CardFooter } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Button, CardFooter, Chip } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useSelector, useDispatch } from "react-redux";
 import usePopulateNotes from "../hooks/notesHooks";
@@ -57,39 +59,41 @@ const HomePage = () => {
   };
 
   return (
-    <MainContent title={notes.length === 0 ? "You have no notes" : "All Your Notes Here"}>
-      {/* {isLoading && <h1 className="mt-10 text-center">Loading your notes...</h1>} */}
-      <div className="mt-10 grid xl:grid-cols-4 md:grid-cols-[repeat(3,31%)] sm:grid-cols-[repeat(2,45%)] grid-cols-1 justify-center gap-8">
-        {notesToDisplay?.length > 0 &&
-          notesToDisplay.map((note) => (
-            <Card
-              className="w-full hover:-translate-y-2 "
-              classNames={{
-                base: "w-full h-52 hover:-translate-y-2 border hover:border-purple-300",
-              }}
-              // isBlurred
-              // isFooterBlurred
-              isPressable
-              onPress={() => handleViewNote(note._id)}
-              key={note._id}
-            >
-              <CardHeader className="justify-center">
-                <div className="flex gap-5">
-                  <div className="flex flex-col gap-1 items-start justify-center">
-                    <h3 className="text-medium font-semibold leading-none text-default-600">
-                      {note.title}
-                    </h3>
+    <MainLayout>
+      <SidebarHome styles={"default"} />
+      <Content title={notes.length === 0 ? "You have no notes" : "All Your Notes Here"}>
+        {/* {isLoading && <h1 className="mt-10 text-center">Loading your notes...</h1>} */}
+        <div className="mt-10 grid xl:grid-cols-4 md:grid-cols-[repeat(3,31%)] sm:grid-cols-[repeat(2,45%)] grid-cols-1 justify-center gap-8">
+          {notesToDisplay?.length > 0 &&
+            notesToDisplay.map((note) => (
+              <Card
+                className="w-full hover:-translate-y-2 "
+                classNames={{
+                  base: "w-full h-56 hover:-translate-y-2 border hover:border-purple-300 overflow-scroll",
+                }}
+                // isBlurred
+                isFooterBlurred
+                isPressable
+                onPress={() => handleViewNote(note._id)}
+                key={note._id}
+              >
+                <CardHeader className="justify-center">
+                  <div className="flex gap-5">
+                    <div className="flex flex-col gap-1 items-start justify-center">
+                      <h3 className="text-medium font-semibold leading-none text-default-600">
+                        {note.title}
+                      </h3>
+                    </div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardBody>
-                <ScrollShadow hideScrollBar size={30}>
-                  {/* {stripHtml(note.noteContent)} */}
-                  <div className="text-sm">{note.summary}</div>
-                </ScrollShadow>
-              </CardBody>
-              <CardFooter className="justify-evenly">
-                {/* <Link to={`/notes/${note._id}`}>
+                </CardHeader>
+                <CardBody>
+                  <ScrollShadow hideScrollBar size={35} offset={5}>
+                    {/* {stripHtml(note.noteContent)} */}
+                    <div className="text-sm">{note.summary}</div>
+                  </ScrollShadow>
+                </CardBody>
+                {/* <CardFooter className="justify-evenly">
+                <Link to={`/notes/${note._id}`}>
                   <Button
                     className={""}
                     color="primary"
@@ -100,8 +104,8 @@ const HomePage = () => {
                   >
                     View
                   </Button>
-                </Link> */}
-                {/* <Button
+                </Link>
+                <Button
                   className={""}
                   color="danger"
                   radius="full"
@@ -110,12 +114,23 @@ const HomePage = () => {
                   onClick={() => handleDeleteNote(note._id)}
                 >
                   Delete
-                </Button> */}
-              </CardFooter>
-            </Card>
-          ))}
-      </div>
-    </MainContent>
+                </Button>
+              </CardFooter> */}
+                {/* <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between"> */}
+                <CardFooter className="py-1 overflow-auto">
+                  <div className="w-full flex flex-wrap gap-2 justify-center">
+                    {note.tags?.map((tag, index) => (
+                      <Chip key={index} variant="flat">
+                        {tag}
+                      </Chip>
+                    ))}
+                  </div>
+                </CardFooter>
+              </Card>
+            ))}
+        </div>
+      </Content>
+    </MainLayout>
   );
 };
 

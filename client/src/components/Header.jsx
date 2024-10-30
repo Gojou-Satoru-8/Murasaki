@@ -1,5 +1,6 @@
 import {
   Navbar,
+  // NavbarMenuToggle,
   NavbarBrand,
   NavbarContent,
   Input,
@@ -11,12 +12,13 @@ import {
 } from "@nextui-org/react";
 import { SearchIcon } from "./SearchIcon.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { authActions } from "../store/index.js";
+import { authActions, notesActions } from "../store/index.js";
+import { useState } from "react";
 
 const Header = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleLogout = async () => {
     try {
       const response = await fetch("http://localhost:3000/logout", { credentials: "include" });
@@ -28,6 +30,7 @@ const Header = () => {
       console.log(data);
       dispatch(authActions.unsetUser()); // Need to call this, cuz this will cause a re-render of the components
       // which are using the authState, for example HomePage, based on which we are nagivated to Login
+      dispatch(notesActions.clearAll());
     } catch (err) {
       console.log(err.message);
     }
@@ -38,7 +41,12 @@ const Header = () => {
       <Navbar
         isBordered
         className="dark:bg-gray-700 bg-gray-950 text-white w-[95%] sm:w-[90%] mx-auto my-2 rounded-3xl"
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
       >
+        {/* <NavbarContent className="sm:hidden" justify="start">
+          <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
+        </NavbarContent> */}
         <NavbarContent className="items-center gap-8" justify="start">
           <NavbarBrand className="mr-4">
             <p className="font-bold text-inherit text-3xl text-purple-300">Murasaki</p>

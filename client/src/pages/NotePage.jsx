@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams, json, useNavigation } from "react-router-dom";
 import { Button, Input, Textarea } from "@nextui-org/react";
-import MainContent from "../components/MainContent";
+import MainLayout from "../components/MainLayout";
+import SidebarNote from "../components/SidebarNote";
+import Content from "../components/Content";
 import NoteEditor from "../components/NoteEditor";
 import CodeEditor from "../components/CodeEditor";
 import Tags from "../components/Tags";
@@ -121,45 +123,15 @@ const NotePage = ({ isNew }) => {
   };
 
   return (
-    <MainContent>
-      {saveText && (
-        <div className="bg-primary rounded py-2 px-4 w-2/3 m-auto text-center">
-          <p>{saveText}</p>
-        </div>
-      )}
-      <div className="flex flex-col gap-4 justify-center">
-        <Input
-          size="lg"
-          classNames={{ input: "text-center text-3xl" }}
-          type="text"
-          value={title}
-          onChange={handleTitleChange}
-          label="Title"
-          labelPlacement="outside"
-          // variant="underlined"
-          required
-        ></Input>
-        <Textarea
-          size=""
-          type="text"
-          value={summary}
-          onChange={handleSummaryChange}
-          label="Summary"
-          labelPlacement="outside"
-          variant="underlined"
-          // required
-        />
-
-        <Tags tags={tags} setTags={setTags}></Tags>
-
-        <NoteEditor noteContent={noteContent} setNoteContent={setNoteContent} />
-        <CodeEditor codeContent={codeContent} setCodeContent={setCodeContent} />
-        <div className="action-buttons flex justify-center gap-4">
-          <Button color="primary" onClick={handleNoteSave}>
+    <MainLayout>
+      <SidebarNote styles={"default"}>
+        <div className="action-buttons w-[95%] md:w-1/2 mx-auto my-10 flex flex-col justify-center gap-4">
+          <Button color="primary" variant="flat" onClick={handleNoteSave}>
             Save
           </Button>
           <Button
             color="danger"
+            variant="flat"
             onClick={() => {
               navigate("/");
             }}
@@ -168,8 +140,43 @@ const NotePage = ({ isNew }) => {
           </Button>
           <EvalModalButton codeContent={codeContent} />
         </div>
-      </div>
-    </MainContent>
+      </SidebarNote>
+      <Content>
+        {saveText && (
+          <div className="bg-primary rounded py-2 px-4 w-2/3 m-auto text-center">
+            <p>{saveText}</p>
+          </div>
+        )}
+        <div className="flex flex-col gap-4 justify-center">
+          <Input
+            size="lg"
+            classNames={{ input: "text-center text-3xl" }}
+            type="text"
+            value={title}
+            onChange={handleTitleChange}
+            label="Title"
+            labelPlacement="outside"
+            // variant="underlined"
+            required
+          ></Input>
+          <Textarea
+            size=""
+            type="text"
+            value={summary}
+            onChange={handleSummaryChange}
+            label="Summary"
+            labelPlacement="outside"
+            variant="underlined"
+            // required
+          />
+
+          <Tags tags={tags} setTags={setTags}></Tags>
+
+          <NoteEditor noteContent={noteContent} setNoteContent={setNoteContent} />
+          <CodeEditor codeContent={codeContent} setCodeContent={setCodeContent} />
+        </div>
+      </Content>
+    </MainLayout>
   );
 };
 

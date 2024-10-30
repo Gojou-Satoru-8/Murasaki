@@ -6,7 +6,7 @@ import CloseIcon from "../assets/close (1).png";
 import { useDispatch, useSelector } from "react-redux";
 import { notesActions } from "../store";
 
-const Sidebar = ({ className }) => {
+const SidebarHome = ({ styles }) => {
   const tags = useSelector((state) => state.notes.tags);
   const selectedTags = useSelector((state) => state.notes.selectedTags);
   console.log(tags, selectedTags);
@@ -14,7 +14,7 @@ const Sidebar = ({ className }) => {
   const dispatch = useDispatch();
 
   return (
-    <div className={className}>
+    <div className={styles === "default" ? "rounded-r-2xl shadow-xl bg-white" : styles}>
       <div className="h-[20%] mx-4 my-10 flex flex-col">
         <div className="py-2 text-center">
           <Link to="/new-note">
@@ -106,4 +106,4 @@ const Sidebar = ({ className }) => {
   );
 };
 
-export default Sidebar;
+export default SidebarHome;

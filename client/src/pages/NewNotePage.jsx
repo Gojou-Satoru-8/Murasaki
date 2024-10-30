@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, Textarea } from "@nextui-org/react";
-import MainContent from "../components/MainContent";
+import MainLayout from "../components/MainLayout";
 import NoteEditor from "../components/NoteEditor";
 import CodeEditor from "../components/CodeEditor";
 import Tags from "../components/Tags";
@@ -77,7 +77,7 @@ const NewNotePage = () => {
   };
 
   return (
-    <MainContent>
+    <MainLayout>
       {saveText && (
         <div className="bg-primary rounded py-2 px-4 w-2/3 m-auto text-center">
           <p>{saveText}</p>
@@ -124,7 +124,7 @@ const NewNotePage = () => {
           <EvalModalButton codeContent={codeContent} />
         </div>
       </div>
-    </MainContent>
+    </MainLayout>
   );
 };
 
