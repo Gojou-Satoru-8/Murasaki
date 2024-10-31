@@ -17,8 +17,13 @@ const SidebarHome = ({ isDeleting, setIsDeleting, styles }) => {
   const toggleDeleting = (e) => setIsDeleting((prev) => !prev);
 
   return (
-    <div className={styles === "default" ? "rounded-r-2xl shadow-xl bg-white" : styles}>
-      <div className="h-[35%] mx-4 my-10 flex flex-col gap-1 overflow-hidden">
+    // <aside className={styles === "default" ? "fixed rounded-r-2xl shadow-xl h-full" : styles}>
+    <aside
+      className={
+        styles === "default" ? "app-sidebar rounded-tr-xl shadow-large min-w-[20%]" : styles
+      }
+    >
+      <div className="mx-4 my-10 flex flex-col gap-1 overflow-hidden">
         <div className="text-center">
           <Link to="/new-note">
             <Button
@@ -68,7 +73,7 @@ const SidebarHome = ({ isDeleting, setIsDeleting, styles }) => {
         </div>
       </div>
       <Divider />
-      <div className="h-[70%] mx-2 my-6 flex flex-col justify-start gap-4 overflow-auto">
+      <div className="h-[50%] mx-2 my-6 flex flex-col justify-start gap-4 overflow-auto">
         <div className="text-center">
           <h1>Tags</h1>
         </div>
@@ -124,7 +129,7 @@ const SidebarHome = ({ isDeleting, setIsDeleting, styles }) => {
           </div>
         </ul>
       </div>
-    </div>
+    </aside>
   );
 };
 

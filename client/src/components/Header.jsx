@@ -11,11 +11,12 @@ import {
   Avatar,
   Button,
 } from "@nextui-org/react";
-import { SearchIcon } from "./SearchIcon.jsx";
+// import { SearchIcon } from "./SearchIcon.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { authActions, notesActions } from "../store/index.js";
 import { useState } from "react";
+import SunIcon from "../assets/SunIcon.jsx";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -43,7 +44,7 @@ const Header = () => {
     <header className="my-6">
       <Navbar
         isBordered
-        className="dark:bg-gray-700 bg-gray-950 text-white w-[95%] sm:w-[90%] mx-auto my-2 rounded-3xl"
+        className="app-header w-[95%] sm:w-[90%] mx-auto my-2 rounded-3xl shadow-large"
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
       >
@@ -52,7 +53,7 @@ const Header = () => {
         </NavbarContent> */}
         <NavbarContent className="items-center gap-8" justify="start">
           <NavbarBrand className={authState.isAuthenticated ? "justify-normal" : "justify-center"}>
-            <p className="font-bold text-inherit text-3xl text-purple-300">Murasaki</p>
+            <p className="font-bold text-inherit text-3xl text-purple-400">Murasaki</p>
           </NavbarBrand>
         </NavbarContent>
         {authState.isAuthenticated && (

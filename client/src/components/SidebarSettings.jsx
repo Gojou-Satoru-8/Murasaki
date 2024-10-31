@@ -4,7 +4,11 @@ import HomeIcon from "../assets/home.png";
 
 const SidebarSettings = ({ styles, children }) => {
   return (
-    <div className={styles === "default" ? "rounded-r-2xl shadow-xl bg-white" : styles}>
+    <div
+      className={
+        styles === "default" ? "app-sidebar rounded-tr-xl shadow-large min-w-[20%]" : styles
+      }
+    >
       <div className="h-[20%] mx-4 my-10 flex flex-col">
         <div className="py-2 text-center">
           <Link to="/">

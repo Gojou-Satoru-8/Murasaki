@@ -10,7 +10,8 @@ const MainLayout = ({ children }) => {
     //   <SidebarHome className={"rounded-r-2xl shadow-xl bg-white"} />
     //   <Content title={title}>{children}</Content>
     // </main>
-    <main className="my-4 grid grid-cols-[22%_auto] grid-rows-1 w-full h-[85vh]">{children}</main>
+    // <main className="my-4 grid grid-cols-[20%_auto] grid-rows-1 w-full">{children}</main>
+    <main className="my-4 flex flex-row w-full h-[85vh]">{children}</main>
   );
 };
 

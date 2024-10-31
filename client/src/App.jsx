@@ -63,7 +63,7 @@ function App() {
 
   if (authState.loading) return <div>Loading</div>;
   return (
-    <NextThemesProvider attribute="class" defaultTheme="light">
+    <NextThemesProvider attribute="class">
       <RouterProvider router={router} />
     </NextThemesProvider>
   );

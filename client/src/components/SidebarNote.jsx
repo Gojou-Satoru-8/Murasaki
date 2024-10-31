@@ -4,7 +4,11 @@ import HomeIcon from "../assets/home.png";
 
 const SidebarNote = ({ styles, children }) => {
   return (
-    <div className={styles === "default" ? "rounded-r-2xl shadow-xl bg-white" : styles}>
+    <div
+      className={
+        styles === "default" ? "app-sidebar rounded-tr-xl shadow-large min-w-[20%]" : styles
+      }
+    >
       <div className="h-[20%] mx-4 my-10 flex flex-col">
         <div className="py-2 text-center">
           <Link to="/">
@@ -23,7 +27,7 @@ const SidebarNote = ({ styles, children }) => {
         </div> */}
       </div>
       <Divider />
-      <div className="h-[70%] mx-2 my-6 flex flex-col justify-start gap-4 overflow-auto">
+      <div className="h-[50%] mx-2 my-6 flex flex-col justify-start gap-4 overflow-auto">
         <div className="text-center">
           <h1>Actions</h1>
         </div>
