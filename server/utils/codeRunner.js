@@ -4,13 +4,13 @@ const path = require("path");
 const { spawn } = require("child_process");
 const { Server } = require("socket.io");
 
-const fileExtMapping = {
-  py: "python3",
-  java: "javac",
-  c: "gcc",
-  cpp: "g++",
-  js: "node",
-};
+// const fileExtMapping = {
+//   py: "python3",
+//   java: "javac",
+//   c: "gcc",
+//   cpp: "g++",
+//   js: "node",
+// };
 
 const setupChildProcess = function (child_process, socket) {
   child_process.stdout.on("data", (chunk) => {

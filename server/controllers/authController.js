@@ -1,7 +1,9 @@
+const crypto = require("crypto");
 const uaParser = require("ua-parser-js");
 const User = require("../models/User");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
+const sendMail = require("../utils/sendMail");
 
 // ROUTE: /signup [POST]
 exports.signup = catchAsync(async (req, res, next) => {
@@ -77,7 +79,7 @@ exports.checkAuth = (req, res, next) => {
   else throw new AppError(401, "User is not authenticated");
 };
 
-// ROUTE: /current-user [GET] - To be used exclusively by client-side
+// ROUTE: /user [GET] - To be used exclusively by client-side
 exports.getCurrentUser = (req, res, next) => {
   console.log("Session ID:", req.sessionID);
   console.log("Session:", req.session);
@@ -87,6 +89,7 @@ exports.getCurrentUser = (req, res, next) => {
   });
 };
 
+// ROUTE: /user [PATCH]
 exports.updateCurrentUser = catchAsync(async (req, res, next) => {
   console.log(req.url, req.method, req.body);
   const { username, name } = req.body; // Only accenting username and name
@@ -113,4 +116,123 @@ exports.deleteCurrentUser = catchAsync(async (req, res, next) => {
   //   status: "success",
   //   message: "Deleted Successfully",
   // });
+});
+
+// ROUTE: /generate-token [POST] - For use in both forgot-password and update-password
+exports.mailPasswordResetToken = catchAsync(async (req, res, next) => {
+  // This middleware will generate a reset-password-token, sent by mail, to be entered by Users.
+  // (1) Get user via email:
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) throw new AppError(404, `No user associated with this email`);
+
+  // (2) Generate Password Reset Token (a hashed version will be in user's document in DB):
+  const token = await user.generatePasswordResetToken();
+  console.log(`Password Reset Token: ${token}`);
+
+  // (3) Set mail message and send mail:
+
+  const message = `Enter this token to reset your password:\n${token}`;
+  try {
+    await sendMail({
+      recipient: ["ankushbhowmikf12@gmail.com", "itsmeankush893@outlook.com", req.body.email],
+      subject: "Reset Password Link (Valid for 10 minutes)",
+      mailBody: message,
+    });
+    console.log("Mail sent successfully");
+    res.status(200).json({
+      status: "success",
+      message: `Password Reset Token sent to your email at ${new Date().toLocaleString("en-UK", {
+        timeZone: "Asia/Kolkata",
+      })}`,
+    });
+  } catch (err) {
+    // If there was error sending mail, then discard the token.
+    await user.discardPasswordResetToken();
+    throw new AppError(err.message, 500, "JSON");
+  }
+});
+
+exports.discardToken = catchAsync(async (req, res, next) => {});
+
+// ROUTE: /reset-password [POST]: To be used when user is resetting forgotten password
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  // Requires new password and token from request body:
+  console.log(req.body);
+  const { token, password } = req.body;
+  // (1) Hash the token from request body
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  // (2) Find user via the hashed token.
+  const user = await User.findOne({ passwordResetToken: hashedToken }).select(
+    "+passwordResetToken +passwordResetTokenExpiry"
+  );
+  if (!user) throw new AppError(400, "Invalid Token!");
+  console.log("User found: ", user);
+  console.log(
+    "Password Reset Token Expiry in IST: ",
+    user.passwordResetTokenExpiry.toLocaleString("en-GB", { timezone: "Asia/Kolkata" })
+  );
+
+  // (3) Check if token has expired (it's expiry time in unix timestamp must be less than now):
+  if (user.passwordResetTokenExpiry < Date.now())
+    throw new AppError(400, "Token for updating password has expired");
+
+  // (4) Check is password matches the existing one:
+  const isPasswordMatch = await user.isPasswordCorrect(password);
+  if (isPasswordMatch) throw new AppError(400, "New Password can't be the same as old password");
+
+  // (5) Proceed towards updating the password.
+  user.password = password;
+  // user.passwordConfirm = passwordConfirm;
+  await user.save({ validateBeforeSave: true });
+  await user.discardPasswordResetToken();
+
+  // (6) Send confirmation:
+  res.status(200).json({
+    status: "success",
+    message: "Password reset successfully",
+  });
+});
+
+// ROUTE: /update-password [POST] To be used when user is updating current password (has to be logged in)
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // Requires new password and token from request body:
+  console.log(req.body);
+  const { token, currentPassword, newPassword } = req.body;
+
+  // (1) Hash the token from request body
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  // (2) Find user via the hashed token.
+  const user = await User.findOne({ passwordResetToken: hashedToken }).select(
+    "+passwordResetToken +passwordResetTokenExpiry"
+  );
+  if (!user) throw new AppError(400, "Invalid Token!");
+  console.log("User found: ", user);
+  console.log(
+    "Password Reset Token Expiry in IST: ",
+    user.passwordResetTokenExpiry.toLocaleString("en-GB", { timezone: "Asia/Kolkata" })
+  );
+
+  // (3) Check if token has expired (it's expiry time in unix timestamp must be less than now):
+  if (user.passwordResetTokenExpiry < Date.now())
+    throw new AppError(400, "Token for updating password has expired");
+
+  // (4) Check is currentPassword is same:
+  const isPasswordMatch = await user.isPasswordCorrect(currentPassword);
+  if (!isPasswordMatch) throw new AppError(400, "Current Password is incorrect");
+
+  // (5) New password shouldn't be the same as old password:
+  if (newPassword === currentPassword)
+    throw new AppError(400, "New Password cannot be the same as old password");
+  // Client-side has same validation, so it is likely not to be triggered.
+
+  // (6) Proceed towards updating the password.
+  user.password = newPassword;
+  // user.passwordConfirm = passwordConfirm;
+  await user.save({ validateBeforeSave: true });
+  await user.discardPasswordResetToken();
+  // (6) Send confirmation:
+  res.status(200).json({
+    status: "success",
+    message: "Password updated successfully",
+  });
 });

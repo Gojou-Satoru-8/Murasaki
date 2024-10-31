@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
-
+const crypto = require("crypto");
 // MONGOOSE SCHEMA:
 const userSchema = new mongoose.Schema(
   {
@@ -35,8 +35,14 @@ const userSchema = new mongoose.Schema(
       maxLength: [15, "Password must not exceed 15 characters"],
     },
     dateCreated: { type: Date, required: true, default: Date.now() },
-    lastPasswordChanged: { type: Date, select: false, default: Date.now() },
+    lastPasswordChanged: {
+      type: Date,
+      select: false,
+      // default: Date.now()
+    },
     settings: String,
+    passwordResetToken: { type: String, select: false },
+    passwordResetTokenExpiry: { type: Date, select: false },
   },
   {
     toJSON: { virtuals: true },
@@ -57,6 +63,31 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 
   return await bcrypt.compare(password, this.password);
 };
+
+userSchema.methods.generatePasswordResetToken = async function () {
+  const token = crypto.randomBytes(32).toString("hex");
+  // const token = faker.string.hexadecimal({ length: 32, casing: "upper", prefix: "" });
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  this.passwordResetToken = hashedToken;
+  this.passwordResetTokenExpiry =
+    Date.now() + Number.parseInt(process.env.PASSWORD_RESET_TOKEN_EXPIRY) * 1000;
+  await this.save({ validateBeforeSave: false });
+  // console.log("Student after generating a reset token: ", this);
+  console.log("Info about Password Reset Token generated:\n", {
+    token,
+    hashedToken,
+    expiry: this.passwordResetTokenExpiry.toLocaleString("en-GB", { timezone: "Asia/Kolkata" }),
+  });
+
+  return token;
+};
+
+userSchema.methods.discardPasswordResetToken = async function () {
+  this.passwordResetToken = undefined;
+  this.passwordResetTokenExpiry = undefined;
+  await this.save({ validateBeforeSave: false });
+};
+
 // MONGOOSE MIDDLEWARES:
 // userSchema.pre("save",  function (next) {
 //   this.dateCreated = Date.now()

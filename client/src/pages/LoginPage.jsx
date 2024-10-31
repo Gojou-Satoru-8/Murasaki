@@ -146,13 +146,21 @@ const LoginPage = () => {
               </div>
             </CardBody>
           </Form>
-          <CardFooter className="justify-center">
-            <p>
-              Not a member yet?{" "}
-              <Link to="/sign-up" className="text-blue-500">
-                Sign Up
-              </Link>
-            </p>
+          <CardFooter className="justify-center text-center">
+            <div className="my-1 flex flex-col gap-2">
+              <p className="">
+                Not a member yet?{" "}
+                <Link to="/sign-up" className="text-blue-500">
+                  Sign Up
+                </Link>
+              </p>
+              <p>
+                Forgot Password? Reset it{" "}
+                <Link to="/forgot-password" className="text-blue-500">
+                  Here
+                </Link>
+              </p>
+            </div>
           </CardFooter>
         </Card>
       </main>

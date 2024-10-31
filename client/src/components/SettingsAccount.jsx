@@ -41,7 +41,15 @@ const SettingsAccount = () => {
     setUserInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const setNotificationUI = ({ message = "", error = "", seconds = 3 }) => {
+  const handleCancelUpdate = (e) => {
+    setUserInfo({
+      email: authState.user?.email,
+      username: authState.user?.username,
+      name: authState.user?.name,
+    });
+    setIsEditing(false);
+  };
+  const setTimeNotification = ({ message = "", error = "" }, seconds = 3) => {
     setTimeout(() => {
       setIsLoading(false);
       setMessage(message);
@@ -73,15 +81,15 @@ const SettingsAccount = () => {
       const data = await response.json();
       console.log("Data: ", data);
       if (!response.ok || data.status === "fail") {
-        setNotificationUI({ error: data.message, seconds: 2 });
+        setTimeNotification({ error: data.message }, 2);
         return;
       }
       dispatch(authActions.updateUser({ user: data.user }));
 
-      setNotificationUI({ message: data.message, seconds: 2 });
+      setTimeNotification({ message: data.message }, 2);
     } catch (err) {
       console.log("Unable to update user-info: ", err.message);
-      setNotificationUI({ error: "No Internet Connection", seconds: 2 });
+      setTimeNotification({ error: "No Internet Connection!" }, 2);
     }
   };
   useEffect(() => {
@@ -137,7 +145,7 @@ const SettingsAccount = () => {
             value={userInfo.email}
             onChange={handleChangeInfo}
             readOnly
-            isDisabled={isEditing}
+            isDisabled={isEditing} // readOnly means non-editable, isDisabled is non-editable and faded
             // variant="underlined"
             classNames={{ input: "text-center" }}
             startContent={
@@ -154,6 +162,7 @@ const SettingsAccount = () => {
             onChange={handleChangeInfo}
             // isDisabled
             readOnly={!isEditing}
+            isDisabled={isLoading}
             // variant="underlined"
             classNames={{ input: "text-center" }}
             startContent={<UserIcon className="m-auto" />}
@@ -170,6 +179,7 @@ const SettingsAccount = () => {
               onChange={handleChangeInfo}
               // isDisabled
               readOnly={!isEditing}
+              isDisabled={isLoading}
               // variant="underlined"
               classNames={{ input: "text-center" }}
               required
@@ -183,7 +193,7 @@ const SettingsAccount = () => {
                 <Button
                   type="button"
                   color="warning"
-                  onClick={() => setIsEditing(false)}
+                  onClick={handleCancelUpdate}
                   isDisabled={isLoading}
                 >
                   Cancel

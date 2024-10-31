@@ -74,7 +74,7 @@ const SignUpPage = () => {
     const data = await response.json();
     console.log(data);
     // Now we're ready to show the output instead of Loading text
-    setTimeout(async () => {
+    setTimeout(() => {
       // NOTE: Set a timer of 1.5 seconds here, if you want the loading alert to persist for sometime
       setIsLoading(false);
       if (data.status !== "success") {
