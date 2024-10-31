@@ -8,17 +8,18 @@ import CloseIcon from "../assets/close (1).png";
 import { useDispatch, useSelector } from "react-redux";
 import { notesActions } from "../store";
 
-const SidebarHome = ({ styles }) => {
+const SidebarHome = ({ isDeleting, setIsDeleting, styles }) => {
   const tags = useSelector((state) => state.notes.tags);
   const selectedTags = useSelector((state) => state.notes.selectedTags);
   console.log(tags, selectedTags);
 
   const dispatch = useDispatch();
+  const toggleDeleting = (e) => setIsDeleting((prev) => !prev);
 
   return (
     <div className={styles === "default" ? "rounded-r-2xl shadow-xl bg-white" : styles}>
-      <div className="h-[20%] mx-4 my-10 flex flex-col">
-        <div className="py-2 text-center">
+      <div className="h-[35%] mx-4 my-10 flex flex-col gap-1 overflow-hidden">
+        <div className="text-center">
           <Link to="/new-note">
             <Button
               variant="light"
@@ -35,7 +36,7 @@ const SidebarHome = ({ styles }) => {
           <Link to="/">
             <Button
               color="secondary"
-              variant="flat"
+              variant="solid"
               className="w-[80%]"
               startContent={<img src={HomeIcon}></img>}
             >
@@ -43,17 +44,27 @@ const SidebarHome = ({ styles }) => {
             </Button>
           </Link>
         </div>
-        <div className="py-2 text-center">
+        <div className="py-1 text-center">
           <Link to="/settings">
             <Button
               color="secondary"
-              variant="light"
+              variant="ghost"
               className="w-[80%]"
               startContent={<img width="22px" src={SettingsIcon}></img>}
             >
               Settings
             </Button>
           </Link>
+        </div>
+        <div className="py-1 text-center">
+          <Button
+            color={isDeleting ? "success" : "danger"}
+            variant="ghost"
+            className="w-[80%]"
+            onClick={toggleDeleting}
+          >
+            {isDeleting ? "Cancel" : "Delete Notes"}
+          </Button>
         </div>
       </div>
       <Divider />

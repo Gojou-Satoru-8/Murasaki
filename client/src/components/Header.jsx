@@ -57,7 +57,7 @@ const Header = () => {
         </NavbarContent>
         {authState.isAuthenticated && (
           <NavbarContent className="gap-8" justify="end">
-            <Input
+            {/* <Input
               classNames={{
                 base: "max-w-full sm:max-w-[15rem] h-10",
                 mainWrapper: "h-full",
@@ -69,7 +69,7 @@ const Header = () => {
               size="sm"
               startContent={<SearchIcon size={18} />}
               type="search"
-            />
+            /> */}
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
                 <Avatar
