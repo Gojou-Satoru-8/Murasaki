@@ -1,25 +1,30 @@
 import { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 // Language packs
-import { javascript } from "@codemirror/lang-javascript";
-import { python } from "@codemirror/lang-python";
-import { cpp } from "@codemirror/lang-cpp";
-import { java } from "@codemirror/lang-java";
-import { html } from "@codemirror/lang-html";
-import { css } from "@codemirror/lang-css";
-import { json } from "@codemirror/lang-json";
+import { langs, langNames, loadLanguage } from "@uiw/codemirror-extensions-langs";
 // Themes
-import { materialLight, materialDark } from "@uiw/codemirror-theme-material";
+import { materialLight, materialDark, materialInit } from "@uiw/codemirror-theme-material";
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 import { atomone } from "@uiw/codemirror-theme-atomone";
 import { dracula } from "@uiw/codemirror-theme-dracula";
+
+const languageToEditorLang = {
+  Python3: "python",
+  Java: "java",
+  C: "c",
+  "C++": "cpp",
+};
 
 const editorStyle = {
   fontSize: "15px", // Adjust this value as needed
 };
 
-const CodeEditor = ({ codeContent, setCodeContent, editorOptions }) => {
+console.log("Lang Names:", langNames, langNames.length);
+
+const CodeEditor = ({ codeContent, setCodeContent, language, editorOptions }) => {
   // const [codeContents, setCodeContents] = useState("// Your code here");
+  const editorLang = languageToEditorLang[language];
+  // When no language is passed, ie when running code, markdown is a safe option.
   const handleChangeContent = (val, viewUpdate) => {
     // console.log("val:", val);
     // console.log(viewUpdate);
@@ -32,8 +37,8 @@ const CodeEditor = ({ codeContent, setCodeContent, editorOptions }) => {
       height="300px"
       theme={atomone}
       //   readOnly={true}
-      //   extensions={[javascript({ jsx: true })]}
-      extensions={[python()]}
+      // extensions={[langs.python()]}
+      extensions={editorLang ? [loadLanguage(editorLang)] : []}
       onChange={handleChangeContent}
       style={editorStyle}
       {...editorOptions}

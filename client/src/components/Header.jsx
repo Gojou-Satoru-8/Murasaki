@@ -51,57 +51,61 @@ const Header = () => {
           <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
         </NavbarContent> */}
         <NavbarContent className="items-center gap-8" justify="start">
-          <NavbarBrand className="mr-4">
+          <NavbarBrand className={authState.isAuthenticated ? "justify-normal" : "justify-center"}>
             <p className="font-bold text-inherit text-3xl text-purple-300">Murasaki</p>
           </NavbarBrand>
-          <Input
-            classNames={{
-              base: "max-w-full sm:max-w-[15rem] h-10",
-              mainWrapper: "h-full",
-              input: "text-small",
-              inputWrapper:
-                "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-            }}
-            placeholder="Type to search..."
-            size="sm"
-            startContent={<SearchIcon size={18} />}
-            type="search"
-          />
-          <Dropdown placement="bottom-end">
-            <DropdownTrigger>
-              <Avatar
-                isBordered
-                as="button"
-                className="transition-transform"
-                color="secondary"
-                name={authState.user?.name
-                  .split(" ")
-                  .map((segment) => segment.at(0))
-                  .join("")}
-                // Here we're taking initials of each segment of name
-                size="sm"
-                src={authState.user?.profilePic}
-              />
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Profile Actions" variant="solid">
-              {/* <DropdownItem key="profile" className="h-14 gap-2">
+        </NavbarContent>
+        {authState.isAuthenticated && (
+          <NavbarContent className="gap-8" justify="end">
+            <Input
+              classNames={{
+                base: "max-w-full sm:max-w-[15rem] h-10",
+                mainWrapper: "h-full",
+                input: "text-small",
+                inputWrapper:
+                  "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+              }}
+              placeholder="Type to search..."
+              size="sm"
+              startContent={<SearchIcon size={18} />}
+              type="search"
+            />
+            <Dropdown placement="bottom-end">
+              <DropdownTrigger>
+                <Avatar
+                  isBordered
+                  as="button"
+                  className="transition-transform"
+                  color="secondary"
+                  name={authState.user?.name
+                    .split(" ")
+                    .map((segment) => segment.at(0))
+                    .join("")}
+                  // Here we're taking initials of each segment of name
+                  size="sm"
+                  src={authState.user?.profilePic}
+                />
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Profile Actions" variant="solid">
+                {/* <DropdownItem key="profile" className="h-14 gap-2">
                 {authState.user ? `Signed in as ${authState.user.email}` : "Not Signed in"}
               </DropdownItem> */}
-              <DropdownItem
-                key="settings"
-                onClick={() => {
-                  navigate("/settings");
-                }}
-              >
-                My Settings
-              </DropdownItem>
+                <DropdownItem
+                  key="settings"
+                  onClick={() => {
+                    navigate("/settings");
+                  }}
+                >
+                  My Settings
+                </DropdownItem>
 
-              <DropdownItem key="logout" color="danger" onClick={handleLogout}>
-                Log Out
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </NavbarContent>
+                <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+                  Log Out
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </NavbarContent>
+        )}
       </Navbar>
     </header>
   );

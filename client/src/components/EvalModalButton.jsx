@@ -13,8 +13,14 @@ import { io } from "socket.io-client";
 import { useState, useRef, useEffect } from "react";
 
 const SOCKET_URL = "http://localhost:4000";
+const languageToExt = {
+  Python3: "py",
+  Java: "java",
+  "C++": "cpp",
+  C: "c",
+};
 
-export default function EvalModalButton({ codeContent }) {
+export default function EvalModalButton({ codeContent, language }) {
   console.log("Eval Modal rendered");
   const socketRef = useRef(null);
 
@@ -71,7 +77,9 @@ export default function EvalModalButton({ codeContent }) {
     onOpen(); // In-built function to open the modal
     // if (socketRef.current)
     socketRef.current.connect();
-    socketRef.current.emit("run-code", JSON.stringify(["py", codeContent]));
+    const fileExt = languageToExt[language];
+    // console.log(languageToExt[language]);
+    socketRef.current.emit("run-code", JSON.stringify([fileExt, codeContent]));
   };
 
   const cleanupOnCloseModal = () => {

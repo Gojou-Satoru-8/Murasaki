@@ -11,6 +11,7 @@ import ErrorPage from "./pages/ErrorPage";
 import RegisterPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/Settings";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 // import { useDispatch, useSelector } from "react-redux";
 // import { useState, useEffect } from "react";
 // import { authActions } from "./store";
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
     element: <LoginPage />,
     // errorElement: <ErrorPage />,
     // action: loginAction,
+  },
+  {
+    path: "forgot-password",
+    element: <ForgotPasswordPage />,
   },
 ]);
 

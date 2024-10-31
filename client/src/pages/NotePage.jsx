@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams, json, useNavigation } from "react-router-dom";
-import { Button, Input, Textarea } from "@nextui-org/react";
+import { Button, Input, Textarea, Select, SelectItem } from "@nextui-org/react";
 import MainLayout from "../components/MainLayout";
 import SidebarNote from "../components/SidebarNote";
 import Content from "../components/Content";
@@ -10,7 +10,9 @@ import CodeEditor from "../components/CodeEditor";
 import Tags from "../components/Tags";
 import EvalModalButton from "../components/EvalModalButton";
 import { authActions, notesActions } from "../store";
+import { current } from "@reduxjs/toolkit";
 
+const languages = ["Python3", "Java", "C", "C++"];
 const NotePage = ({ isNew }) => {
   console.log("New Note:", isNew);
 
@@ -33,13 +35,14 @@ const NotePage = ({ isNew }) => {
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [tags, setTags] = useState([]);
+  const [language, setLanguage] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [codeContent, setCodeContent] = useState("// Your code here");
   const [saveText, setSaveText] = useState("");
-  console.log(summary);
-
-  console.log("Note Content: ", noteContent);
-  console.log("Code Content: ", codeContent);
+  // console.log(summary);
+  // console.log(language);
+  // console.log("Note Content: ", noteContent);
+  // console.log("Code Content: ", codeContent);
 
   // const authState = useSelector((state) => state.auth);
   // console.log(authState);
@@ -85,6 +88,7 @@ const NotePage = ({ isNew }) => {
       setTitle(currentNote.title);
       setSummary(currentNote.summary);
       setTags(currentNote.tags);
+      setLanguage(currentNote.language);
       setNoteContent(currentNote.noteContent.at(0));
       setCodeContent(currentNote.codeContent);
     }
@@ -92,6 +96,7 @@ const NotePage = ({ isNew }) => {
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleSummaryChange = (e) => setSummary(e.target.value);
+  const handleLanguageChange = (e) => setLanguage(e.target.value);
   const handleNoteSave = async () => {
     // Send http POST request if isNew, else PATCH request for updating existing note:
 
@@ -107,6 +112,7 @@ const NotePage = ({ isNew }) => {
           title,
           summary,
           tags,
+          language,
           noteContent,
           codeContent,
         }),
@@ -155,7 +161,7 @@ const NotePage = ({ isNew }) => {
           >
             {isNew ? "Cancel" : "Go Back"}
           </Button>
-          <EvalModalButton codeContent={codeContent} />
+          <EvalModalButton codeContent={codeContent} language={language} />
         </div>
       </SidebarNote>
       <Content>
@@ -186,11 +192,34 @@ const NotePage = ({ isNew }) => {
             variant="underlined"
             // required
           />
-
           <Tags tags={tags} setTags={setTags}></Tags>
 
           <NoteEditor noteContent={noteContent} setNoteContent={setNoteContent} />
-          <CodeEditor codeContent={codeContent} setCodeContent={setCodeContent} />
+          <Select
+            classNames={{ base: "m-auto" }}
+            isRequired
+            name="lang"
+            label="Programming Language"
+            labelPlacement="outside"
+            className="max-w-xs"
+            selectedKeys={[language]}
+            onChange={handleLanguageChange}
+          >
+            {languages.map((lang) => (
+              <SelectItem
+                key={lang}
+                // value={lang.name}  // key is taken as the value
+              >
+                {lang}
+              </SelectItem>
+            ))}
+          </Select>
+          {language === "Java" && <p>Name the class {"'program'"} to run correctly</p>}
+          <CodeEditor
+            codeContent={codeContent}
+            setCodeContent={setCodeContent}
+            language={language}
+          />
         </div>
       </Content>
     </MainLayout>

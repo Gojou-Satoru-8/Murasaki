@@ -15,6 +15,10 @@ const noteSchema = new mongoose.Schema({
     // required: [true, "Please provide a summary"],
   },
   tags: [String],
+  language: {
+    type: String,
+    enum: ["Python3", "Java", "C++", "C"],
+  },
   noteContent: {
     type: [Object],
     // required: true,
