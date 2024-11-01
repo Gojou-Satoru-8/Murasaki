@@ -49,7 +49,7 @@ const SettingsPreferences = () => {
     // console.log(formDataObj);
 
     try {
-      const response = await fetch("http://localhost:3000/user/settings", {
+      const response = await fetch("http://localhost:3000/api/user/settings", {
         method: "PATCH",
         body: JSON.stringify(preferences),
         headers: { "Content-Type": "application/json" },

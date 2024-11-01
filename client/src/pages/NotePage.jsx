@@ -61,7 +61,7 @@ const NotePage = ({ isNew }) => {
 
   // useEffect(() => {
   //   const fetchNoteDetails = async () => {
-  //     const response = await fetch(`http://localhost:3000/notes/${params.id}`, {
+  //     const response = await fetch(`http://localhost:3000/api/notes/${params.id}`, {
   //       credentials: "include",
   //     });
   //     console.log(response);
@@ -121,7 +121,7 @@ const NotePage = ({ isNew }) => {
     }
     setUIElements({ loading: true, message: "", error: "" }), 0;
     try {
-      let URL = "http://localhost:3000/notes/";
+      let URL = "http://localhost:3000/api/notes/";
       if (!isNew) URL += params.id;
       const response = await fetch(URL, {
         method: isNew ? "POST" : "PATCH",

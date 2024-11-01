@@ -53,7 +53,7 @@ const LoginPage = () => {
 
     const formDataObj = Object.fromEntries(formData);
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:3000/api/login", {
         method: "POST", // POST
         body: JSON.stringify(formDataObj),
         headers: { "Content-Type": "application/json" },
@@ -178,7 +178,7 @@ const LoginPage = () => {
 //   }
 
 //   const formDataObj = Object.fromEntries(formData);
-//   const response = await fetch("http://localhost:3000/login", {
+//   const response = await fetch("http://localhost:3000/api/login", {
 //     method: request.method, // POST
 //     body: JSON.stringify(formDataObj),
 //     headers: { "Content-Type": "application/json" },

@@ -46,7 +46,7 @@ const ForgotPasswordPage = () => {
     console.log(formDataObj);
 
     try {
-      const response = await fetch("http://localhost:3000/generate-token", {
+      const response = await fetch("http://localhost:3000/api/generate-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formDataObj), // consists only of email
@@ -75,7 +75,7 @@ const ForgotPasswordPage = () => {
     console.log(formDataObj);
 
     try {
-      const response = await fetch("http://localhost:3000/reset-password", {
+      const response = await fetch("http://localhost:3000/api/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formDataObj),

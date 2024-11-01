@@ -37,7 +37,7 @@ const NewNotePage = () => {
     // Send http POST request:
     setSaveText("Saving! Please wait :)");
     try {
-      const response = await fetch("http://localhost:3000/notes", {
+      const response = await fetch("http://localhost:3000/api/notes", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

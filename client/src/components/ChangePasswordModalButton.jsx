@@ -63,7 +63,7 @@ const ChangePasswordModalButton = () => {
     });
     // onOpen(); // Opens the modal
     try {
-      const response = await fetch("http://localhost:3000/generate-token", {
+      const response = await fetch("http://localhost:3000/api/generate-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: authState.user.email }),
@@ -95,7 +95,7 @@ const ChangePasswordModalButton = () => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:3000/update-password", {
+      const response = await fetch("http://localhost:3000/api/update-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formDataObj),

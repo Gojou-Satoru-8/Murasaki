@@ -11,7 +11,7 @@ const usePopulateNotes = () => {
 
   useEffect(() => {
     const fetchAllNotes = async () => {
-      const response = await fetch("http://localhost:3000/notes", { credentials: "include" });
+      const response = await fetch("http://localhost:3000/api/notes", { credentials: "include" });
       const data = await response.json();
 
       // For unauthorized errors:

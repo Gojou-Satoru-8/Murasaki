@@ -37,7 +37,7 @@ const HomePage = () => {
   // console.log(notesToDisplay);
 
   const handleViewNote = async (id) => {
-    // const response = await fetch(`http://localhost:3000/notes/${id}`, {
+    // const response = await fetch(`http://localhost:3000/api/notes/${id}`, {
     //   credentials: "include",
     // });
     // const data = await response.json();
@@ -46,7 +46,7 @@ const HomePage = () => {
     navigate(`/notes/${id}`);
   };
   const handleDeleteNote = async (id) => {
-    const response = await fetch(`http://localhost:3000/notes/${id}`, {
+    const response = await fetch(`http://localhost:3000/api/notes/${id}`, {
       method: "DELETE",
       credentials: "include",
     });

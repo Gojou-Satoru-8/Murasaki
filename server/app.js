@@ -42,7 +42,7 @@ app.use(
   })
 );
 
-app.get("/users", async (req, res, next) => {
+app.get("/api/users", async (req, res, next) => {
   try {
     const allUsers = await User.find(req.query);
     res.json(allUsers);
@@ -65,8 +65,8 @@ app.get("/users", async (req, res, next) => {
 //   }
 // });
 
-app.use("/", authRouter);
-app.use("/notes", noteRouter);
+app.use("/api/", authRouter);
+app.use("/api/notes", noteRouter);
 app.all("*", (req, res, next) => {
   // console.log("Session ID:", req.sessionID);
   // console.log("Session:", req.session);

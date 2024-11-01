@@ -11,7 +11,7 @@ import {
   Avatar,
   Button,
 } from "@nextui-org/react";
-// import { SearchIcon } from "./SearchIcon.jsx";
+// import { SearchIcon } from "../assets/SearchIcon.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { authActions, notesActions } from "../store/index.js";
@@ -25,7 +25,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:3000/logout", { credentials: "include" });
+      const response = await fetch("http://localhost:3000/api/logout", { credentials: "include" });
       if (!response.ok) {
         alert("Unable to log out! Server Issue");
         return;

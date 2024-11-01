@@ -64,7 +64,7 @@ const SignUpPage = () => {
     }
 
     // NOTE: Rest of the validations happen on the server-side
-    const response = await fetch("http://localhost:3000/signup", {
+    const response = await fetch("http://localhost:3000/api/signup", {
       method: "POST", // POST
       body: JSON.stringify(formDataObj),
       headers: { "Content-Type": "application/json" },
@@ -204,7 +204,7 @@ const SignUpPage = () => {
 // }
 
 // const formDataObj = Object.fromEntries(formData);
-// const response = await fetch("http://localhost:3000/signup", {
+// const response = await fetch("http://localhost:3000/api/signup", {
 //   method: request.method, // POST
 //   body: JSON.stringify(formDataObj),
 //   headers: { "Content-Type": "application/json" },
