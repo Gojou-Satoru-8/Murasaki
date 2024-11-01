@@ -74,6 +74,10 @@ export default function EvalModalButton({ codeContent, language }) {
   }, []);
 
   const handleOpenCodeModal = (e) => {
+    if (!language) {
+      alert("Please select a language");
+      return;
+    }
     onOpen(); // In-built function to open the modal
     // if (socketRef.current)
     socketRef.current.connect();

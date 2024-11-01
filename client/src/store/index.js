@@ -24,6 +24,10 @@ const authSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
+    updateUserSettings: (state, action) => {
+      // state.user.settings = { ...state.user?.settings, ...action.payload };
+      state.user = { ...state.user, settings: { ...action.payload } };
+    },
     // OR:
     // login: (state, action) => ({
     //   isAuthenticated: true,

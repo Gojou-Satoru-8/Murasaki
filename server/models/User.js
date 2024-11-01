@@ -40,7 +40,22 @@ const userSchema = new mongoose.Schema(
       select: false,
       // default: Date.now()
     },
-    settings: String,
+    settings: {
+      uiTheme: { type: String, default: "light" },
+      codeEditorTheme: { type: String, default: "Atomone" },
+      codeEditorWindowSize: {
+        type: Number,
+        default: 500,
+        min: [250, "Editor should be at least 250px"],
+        max: [1000, "Editor cannot exceed 1000px"],
+      },
+      codeEditorFontSize: {
+        type: Number,
+        default: 15,
+        min: [10, "Font-size should be at least 10px"],
+        max: [20, "Font-size cannot exceed 20px"],
+      },
+    },
     passwordResetToken: { type: String, select: false },
     passwordResetTokenExpiry: { type: Date, select: false },
   },

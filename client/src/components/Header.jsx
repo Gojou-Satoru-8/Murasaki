@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { authActions, notesActions } from "../store/index.js";
 import { useState } from "react";
-import SunIcon from "../assets/SunIcon.jsx";
+import ThemeToggle from "./ThemeToggle.jsx";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -71,6 +71,7 @@ const Header = () => {
               startContent={<SearchIcon size={18} />}
               type="search"
             /> */}
+            <ThemeToggle />
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
                 <Avatar

@@ -4,7 +4,7 @@ const User = require("../models/User");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const sendMail = require("../utils/sendMail");
-
+const refreshSessionUser = require("../utils/refreshSessionUser");
 // ROUTE: /signup [POST]
 exports.signup = catchAsync(async (req, res, next) => {
   console.log(req.body);
@@ -102,6 +102,9 @@ exports.updateCurrentUser = catchAsync(async (req, res, next) => {
   console.log(updatedUser);
   if (!updatedUser) throw new AppError(404, "No such user found!");
 
+  // req.session.user = updatedUser;
+  // await req.session.save();
+  await refreshSessionUser(updatedUser, req.session);
   return res.status(200).json({
     status: "success",
     message: "User information updated successfully",
@@ -230,9 +233,32 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // user.passwordConfirm = passwordConfirm;
   await user.save({ validateBeforeSave: true });
   await user.discardPasswordResetToken();
+
+  await refreshSessionUser(user, req.session);
   // (6) Send confirmation:
   res.status(200).json({
     status: "success",
     message: "Password updated successfully",
   });
+});
+
+exports.updateUserSettings = catchAsync(async (req, res, next) => {
+  console.log("triggered");
+
+  console.log(req.url, req.method, req.body);
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.session.user._id,
+    { settings: { ...req.body } },
+    { new: true, runValidators: true }
+  );
+  if (!updatedUser) throw new AppError(404, "No user found!");
+  console.log(updatedUser);
+  // const user = await User.findById(req.session.user._id);
+  // user.settings = req.body;
+  // await user.save({ validateBeforeSave: false });
+  await refreshSessionUser(updatedUser, req.session);
+  res
+    .status(200)
+    .json({ status: "success", message: "Settings updated successfully", user: updatedUser });
 });

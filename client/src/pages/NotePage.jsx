@@ -38,9 +38,13 @@ const NotePage = ({ isNew }) => {
   const [language, setLanguage] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [codeContent, setCodeContent] = useState("// Your code here");
-  const [saveText, setSaveText] = useState("");
+  const [uiElements, setUIElements] = useState({
+    loading: false,
+    error: "",
+    message: "",
+  });
   // console.log(summary);
-  // console.log(language);
+  console.log(language);
   // console.log("Note Content: ", noteContent);
   // console.log("Code Content: ", codeContent);
 
@@ -94,13 +98,28 @@ const NotePage = ({ isNew }) => {
     }
   }, [isNew, currentNote]);
 
+  const setTimeNotification = ({ message = "", error = "" }, seconds = 3) => {
+    setTimeout(() => {
+      setUIElements({ loading: false, message, error });
+    }, seconds * 1000);
+  };
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleSummaryChange = (e) => setSummary(e.target.value);
   const handleLanguageChange = (e) => setLanguage(e.target.value);
   const handleNoteSave = async () => {
     // Send http POST request if isNew, else PATCH request for updating existing note:
+    // setSaveText(`${isNew ? "Saving" : "Updating"}! Please wait :)`);
+    // setLoading(true);
 
-    setSaveText(`${isNew ? "Saving" : "Updating"}! Please wait :)`);
+    if (!title) {
+      setTimeNotification({ error: "Please provide a title" }, 0);
+      return;
+    }
+    if (!language) {
+      setTimeNotification({ error: "Please choose a language" }, 0);
+      return;
+    }
+    setUIElements({ loading: true, message: "", error: "" }), 0;
     try {
       let URL = "http://localhost:3000/notes/";
       if (!isNew) URL += params.id;
@@ -129,22 +148,33 @@ const NotePage = ({ isNew }) => {
         navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
         return;
       }
-      setSaveText(data.message);
+
+      if (!response.ok || data.status === "fail" || data.status === "error") {
+        setTimeNotification({ error: data.message }, 2);
+        return;
+      }
       // Saving the created note to redux, to prevent additional fetch for reflecting the added note in homepage:
       dispatch(notesActions.updateNote({ note: data.note }));
+      setTimeNotification({ message: data.message }, 2);
       // In case the note is updated by removing a selected tag, this may cause UI inconsistency
       if (!isNew) dispatch(notesActions.clearSelectedTags());
       if (isNew) {
         // setTimeout(() => {
-        setSaveText("");
+        setUIElements((prev) => ({ ...prev, message: "", error: "" }));
         navigate(`/notes/${data.note._id}`);
         // }, 1000);
-      } else setTimeout(() => setSaveText(""), 2000);
+      }
     } catch (err) {
       console.log(err.message);
+      setTimeNotification({ error: "No Internet Connection" }, 3);
     }
   };
-
+  useEffect(() => {
+    setTimeout(() => {
+      if (uiElements.message || uiElements.error)
+        setUIElements({ loading: false, message: "", error: "" });
+    }, 4000);
+  }, [uiElements]);
   return (
     <MainLayout>
       <SidebarNote styles={"default"}>
@@ -165,21 +195,31 @@ const NotePage = ({ isNew }) => {
         </div>
       </SidebarNote>
       <Content>
-        {saveText && (
+        {uiElements.loading && (
           <div className="bg-primary rounded py-2 px-4 w-2/3 m-auto text-center">
-            <p>{saveText}</p>
+            <p>Processing Changes! Please wait</p>
+          </div>
+        )}
+        {uiElements.message && (
+          <div className="bg-success rounded py-2 px-4 w-2/3 m-auto text-center">
+            <p>{uiElements.message}</p>
+          </div>
+        )}
+        {uiElements.error && (
+          <div className="bg-danger rounded py-2 px-4 w-2/3 m-auto text-center">
+            <p>{uiElements.error}</p>
           </div>
         )}
         <div className="flex flex-col gap-4 justify-center">
           <Input
             size="lg"
-            classNames={{ input: "text-center text-3xl" }}
+            classNames={{ base: "w-3/5 m-auto", input: "text-3xl text-center" }}
             type="text"
             value={title}
             onChange={handleTitleChange}
             label="Title"
-            labelPlacement="outside"
-            // variant="underlined"
+            // labelPlacement="outside"
+            variant="underlined"
             required
           ></Input>
           <Textarea
@@ -197,11 +237,11 @@ const NotePage = ({ isNew }) => {
           <NoteEditor noteContent={noteContent} setNoteContent={setNoteContent} />
           <Select
             classNames={{ base: "m-auto" }}
-            isRequired
+            required
             name="lang"
             label="Programming Language"
-            labelPlacement="outside"
-            className="max-w-xs"
+            labelPlacement="outside-left"
+            className="max-w-sm"
             selectedKeys={[language]}
             onChange={handleLanguageChange}
           >

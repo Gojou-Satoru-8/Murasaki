@@ -17,5 +17,5 @@ router
   .patch(authController.updateCurrentUser)
   .delete(authController.deleteCurrentUser, authController.logout);
 router.route("/update-password").post(authController.updatePassword);
-
+router.route("/user/settings").patch(authController.updateUserSettings);
 module.exports = router;

@@ -17,7 +17,11 @@ const noteSchema = new mongoose.Schema({
   tags: [String],
   language: {
     type: String,
-    enum: ["Python3", "Java", "C++", "C"],
+    enum: {
+      values: ["Python3", "Java", "C++", "C"],
+      default: "Python3",
+      required: [true, "Please select an language (Python3, Java, C++, C)"],
+    },
   },
   noteContent: {
     type: [Object],
