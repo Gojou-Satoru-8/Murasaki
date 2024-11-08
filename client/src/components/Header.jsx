@@ -44,7 +44,7 @@ const Header = () => {
     <header className="my-6">
       <Navbar
         isBordered
-        className="app-header w-[95%] sm:w-[90%] mx-auto my-2 rounded-3xl shadow-large"
+        className="app-header w-[95%] sm:w-[80%] mx-auto my-2 rounded-3xl shadow-large"
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
       >
@@ -55,6 +55,9 @@ const Header = () => {
           <NavbarBrand className={authState.isAuthenticated ? "justify-normal" : "justify-center"}>
             <p className="font-bold text-inherit text-3xl text-purple-400">Murasaki</p>
           </NavbarBrand>
+        </NavbarContent>
+        <NavbarContent className="gap-8" justify="center">
+          <ThemeToggle />
         </NavbarContent>
         {authState.isAuthenticated && (
           <NavbarContent className="gap-8" justify="end">
@@ -71,7 +74,7 @@ const Header = () => {
               startContent={<SearchIcon size={18} />}
               type="search"
             /> */}
-            <ThemeToggle />
+
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
                 <Avatar

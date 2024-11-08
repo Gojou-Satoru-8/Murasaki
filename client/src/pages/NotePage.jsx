@@ -54,7 +54,7 @@ const NotePage = ({ isNew }) => {
   // useEffect(() => {
   //   if (!authState.isAuthenticated) {
   //     // alert("Please login to gain access to this page");
-  //     navigate("/log-in");
+  //     navigate("/login");
   //     return;
   //   }
   // }, [authState.isAuthenticated, navigate]);
@@ -73,7 +73,7 @@ const NotePage = ({ isNew }) => {
   //       dispatch(authActions.unsetUser());
   //       // dispatch(notesActions.setNotes({ notes: [] }));
   //       dispatch(notesActions.clearAll());
-  //       navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
+  //       navigate("/login", { state: { message: "Time Out! Please login again" } });
   //       return;
   //     } else if (!response.ok) alert(`Could not populate current note with id ${params.id}`); // For all other errors:
 
@@ -145,7 +145,7 @@ const NotePage = ({ isNew }) => {
         dispatch(authActions.unsetUser());
         // dispatch(notesActions.setNotes({ notes: [] }));
         dispatch(notesActions.clearAll());
-        navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
+        navigate("/login", { state: { message: "Time Out! Please login again" } });
         return;
       }
 

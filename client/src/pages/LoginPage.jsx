@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Form, Link, useLocation, useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
-import { Input, Button } from "@nextui-org/react";
+import { Link, useLocation } from "react-router-dom";
+import { Card, CardHeader, CardBody, CardFooter, Tabs, Tab } from "@nextui-org/react";
 import Header from "../components/Header";
-import { MailIcon } from "../assets/MailIcon";
-import { EyeSlashFilledIcon, EyeFilledIcon } from "../assets/EyeIconsPassword";
-
-import { authActions } from "../store";
+import LoginForm from "../components/LoginForm";
+import SignupForm from "../components/SignupForm";
 import { useRedirectIfAuthenticated } from "../hooks/checkAuthHooks";
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const location = useLocation();
   // console.log("Location/Navigation messages: ", location.state);
-  const signUpSuccessfulMessage = location.state?.message; // For sign up successful message from signup page
+  const navigateMessage = location.state?.message;
+  // Messages coming from navigate("/login", {state: {message: "..."}})
+  // Such as sign up successful message from signup page, or logged out message when cookie expires
 
-  const [message, setMessage] = useState(signUpSuccessfulMessage || "");
-  const [isLoading, setIsLoading] = useState(false);
-  const [eyeIconVisible, setEyeIconVisible] = useState(false);
-  // On first load, there won't be any error, only sign up successful message
-  // But on subsequent rerenders, when errors will be there, we shall show the errors only
+  const [uiElements, setUIElements] = useState({
+    loading: false,
+    message: navigateMessage || "",
+    error: "",
+  });
+
+  const [selectedForm, setSelectedForm] = useState("Log In");
 
   // NOTE: Following logic moved to checkAuthHooks.jsx:
   // const authState = useSelector((state) => state.auth);
@@ -32,134 +29,80 @@ const LoginPage = () => {
   // });
   const authState = useRedirectIfAuthenticated();
 
+  const setTimeNotification = ({ loading = false, message = "", error = "" }, seconds = 0) => {
+    // To be called exclusively, i.e either message or error, so as to set one of them, discarding the other.
+    // Also discards the loading banner.
+    const timeout = setTimeout(() => {
+      setUIElements({ loading, message, error });
+    }, seconds * 1000);
+    return timeout;
+  };
+
   useEffect(() => {
-    if (message) {
-      const timeout = setTimeout(() => setMessage(""), 8000);
+    // Clearing message or error banners
+    if (uiElements.message || uiElements.error) {
+      const timeout = setTimeNotification({}, 5);
       return () => clearTimeout(timeout);
     }
-  }, [message]);
-
-  const toggleEyeIconVisibility = () => setEyeIconVisible((prev) => !prev);
-  const handleLoginForm = async (e) => {
-    setIsLoading(true);
-    setMessage("");
-
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    // console.log(formData);
-    // for (const [name, value] of formData) {
-    //   console.log(name, value);
-    // }
-
-    const formDataObj = Object.fromEntries(formData);
-    try {
-      const response = await fetch("http://localhost:3000/api/login", {
-        method: "POST", // POST
-        body: JSON.stringify(formDataObj),
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      // console.log(response);
-
-      const data = await response.json();
-
-      // console.log(data);
-      // Now we're ready to show the output instead of Loading text
-      setTimeout(() => {
-        // NOTE: Set a timer of 1.5 seconds here, if you want the loading alert to persist for sometime
-        setIsLoading(false);
-        setMessage(data.message);
-        // Expected Responses with messages:
-        // Status: 200 (Logged in Successfully), 401 (Incorrect password), 404 (No such user with the email)
-        // if (data.status !== "success") return;
-        if (response.status !== 200) return;
-
-        dispatch(authActions.setUser({ user: data.user }));
-        setTimeout(() => navigate("/"), 1000);
-      }, 1500);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+  }, [uiElements.message, uiElements.error]);
 
   return (
     <>
       <Header />
-      <main className="h-[80vh] flex justify-center items-center">
-        <Card className="w-[95%] md:w-1/2 mx-auto" isBlurred>
+      <main className="h-[80vh]">
+        <Card className="w-[95%] md:w-2/3 lg:w-1/2 mx-auto mt-8" isBlurred>
           <CardHeader className="flex-col justify-center pt-10 px-20 gap-4">
-            <h1 className="text-4xl">Log In</h1>
-            {isLoading && (
+            <h1 className="text-4xl">{selectedForm}</h1>
+            {uiElements.loading && (
               <div className="bg-primary rounded py-2 px-4">
                 <p>Validating... Please wait!</p>
               </div>
             )}
-            {message && (
-              <div className="bg-primary rounded py-2 px-4">
-                <p>{message}</p>
+            {uiElements.message && (
+              <div className="bg-success rounded py-2 px-4">
+                <p>{uiElements.message}</p>
+              </div>
+            )}
+            {uiElements.error && (
+              <div className="bg-danger rounded py-2 px-4">
+                <p>{uiElements.error}</p>
               </div>
             )}
           </CardHeader>
-          {/* <Form action="/login" method="POST"> */}
-          <Form method="POST" onSubmit={handleLoginForm}>
-            <CardBody className="px-20 gap-3 justify-center ">
-              <Input
-                type="email"
-                name="email"
-                label="Email"
-                labelPlacement="outside"
-                size="lg"
-                endContent={
-                  <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0 m-auto" />
-                }
-                required
-              ></Input>
-              <Input
-                type={eyeIconVisible ? "text" : "password"}
-                name="password"
-                label="Password"
-                labelPlacement="outside"
-                size="lg"
-                endContent={
-                  <button
-                    className="focus:outline-none m-auto"
-                    type="button"
-                    onClick={toggleEyeIconVisibility}
-                    aria-label="toggle password visibility"
-                  >
-                    {eyeIconVisible ? (
-                      <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                    ) : (
-                      <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                    )}
-                  </button>
-                }
-                required
-              ></Input>
-              <div className="flex flex-row justify-center gap-8 pt-2">
-                <Button type="reset" color="danger">
-                  Reset
-                </Button>
-                <Button type="submit" color="primary">
-                  Log In
-                </Button>
-              </div>
-            </CardBody>
-          </Form>
+
+          <CardBody className="px-10 lg:px-20 justify-center">
+            <Tabs
+              fullWidth
+              size="lg"
+              aria-label="Tabs form"
+              selectedKey={selectedForm}
+              onSelectionChange={setSelectedForm}
+            >
+              <Tab key="Log In" title="Log In">
+                <LoginForm
+                  setUIElements={setUIElements}
+                  setTimeNotification={setTimeNotification}
+                />
+              </Tab>
+              <Tab key="Sign Up" title="Sign Up">
+                <SignupForm
+                  setUIElements={setUIElements}
+                  setTimeNotification={setTimeNotification}
+                  setSelectedForm={setSelectedForm}
+                />
+              </Tab>
+            </Tabs>
+          </CardBody>
           <CardFooter className="justify-center text-center">
             <div className="my-1 flex flex-col gap-2">
-              <p className="">
-                Not a member yet?{" "}
-                <Link to="/sign-up" className="text-blue-500">
-                  Sign Up
-                </Link>
-              </p>
-              <p>
-                Forgot Password? Reset it{" "}
-                <Link to="/forgot-password" className="text-blue-500">
-                  Here
-                </Link>
-              </p>
+              {selectedForm === "Log In" && (
+                <p>
+                  Forgot Password? Reset it{" "}
+                  <Link to="/forgot-password" className="text-blue-500">
+                    Here
+                  </Link>
+                </p>
+              )}
             </div>
           </CardFooter>
         </Card>

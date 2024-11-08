@@ -26,7 +26,7 @@ const NewNotePage = () => {
   // useEffect(() => {
   //   if (!authState.isAuthenticated) {
   //     // alert("Please login to gain access to this page");
-  //     navigate("/log-in");
+  //     navigate("/login");
   //     return;
   //   }
   // });
@@ -60,7 +60,7 @@ const NewNotePage = () => {
         dispatch(authActions.unsetUser());
         // dispatch(notesActions.setNotes({ notes: [] }));
         dispatch(notesActions.clearAll());
-        navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
+        navigate("/login", { state: { message: "Time Out! Please login again" } });
         return;
       }
       setSaveText(data.message);

@@ -83,7 +83,7 @@ const SignUpPage = () => {
       }
       setError("");
 
-      navigate("/log-in", { state: { message: "Sign Up successful" } });
+      navigate("/login", { state: { message: "Sign Up successful" } });
     }, 1000);
   };
   return (
@@ -181,7 +181,7 @@ const SignUpPage = () => {
           <CardFooter className="justify-center">
             <p>
               Already a member?{" "}
-              <Link to="/log-in" className="text-blue-500">
+              <Link to="/login" className="text-blue-500">
                 Log In
               </Link>
             </p>
@@ -216,7 +216,7 @@ const SignUpPage = () => {
 // if (data.status !== "success") {
 //   return data;
 // }
-// return redirect("/log-in");
-// return navigate("/log-in", { message: "Logged In successfully" });
+// return redirect("/login");
+// return navigate("/login", { message: "Logged In successfully" });
 // };
 export default SignUpPage;

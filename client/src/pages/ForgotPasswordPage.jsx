@@ -91,7 +91,7 @@ const ForgotPasswordPage = () => {
       // client state
       // Finally, when successful:
       setTimeNotification({ message: data.message }, 2);
-      navigate("/log-in", { state: { message: "Password Changed Successfully" } });
+      navigate("/login", { state: { message: "Password Changed Successfully" } });
     } catch (err) {
       setTimeNotification({ error: "No Internet Connection!" }, 2);
     }
@@ -215,16 +215,16 @@ const ForgotPasswordPage = () => {
             <div className="my-1 flex flex-col gap-2">
               <p>
                 Back to{" "}
-                <Link to="/log-in" className="text-blue-500">
+                <Link to="/login" className="text-blue-500">
                   Login
                 </Link>
               </p>
-              <p className="">
+              {/* <p>
                 Not a member yet?{" "}
                 <Link to="/sign-up" className="text-blue-500">
                   Sign Up
                 </Link>
-              </p>
+              </p> */}
             </div>
           </CardFooter>
         </Card>

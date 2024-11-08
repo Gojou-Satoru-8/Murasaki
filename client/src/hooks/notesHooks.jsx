@@ -16,10 +16,10 @@ const usePopulateNotes = () => {
 
       // For unauthorized errors:
       if (response.status === 401) {
-        // navigate("/log-in", { state: { message: "Time Out! Please log-in again" } });
+        // navigate("/login", { state: { message: "Time Out! Please login again" } });
         dispatch(authActions.unsetUser());
         dispatch(notesActions.clearAll());
-        navigate("/log-in");
+        navigate("/login");
         return;
         // NOTE: usePopulateNotes hook follows the RedirectIfNotAuthenticated Hook, which means that if this hook runs,
         // at the home page, then the user is authenticated. This if check is mainly used for the case when

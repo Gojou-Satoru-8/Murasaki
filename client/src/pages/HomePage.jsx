@@ -10,7 +10,7 @@ import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useSelector, useDispatch } from "react-redux";
 // import usePopulateNotes from "../hooks/notesHooks";
 // import { useRedirectIfNotAuthenticated } from "../hooks/checkAuthHooks";
-import { notesActions } from "../store";
+import { authActions, notesActions } from "../store";
 // import CloseIcon from "../assets/close.png";
 
 const stripHtml = (html) => {
@@ -52,6 +52,13 @@ const HomePage = () => {
     });
     // const data = await response.json();
     // console.log(data);
+    if (response.status === 401) {
+      dispatch(authActions.unsetUser());
+      // dispatch(notesActions.setNotes({ notes: [] }));
+      dispatch(notesActions.clearAll());
+      navigate("/login", { state: { message: "Time Out! Please login again" } });
+      return;
+    }
     if (response.status !== 204) {
       alert("Unable to delete");
 

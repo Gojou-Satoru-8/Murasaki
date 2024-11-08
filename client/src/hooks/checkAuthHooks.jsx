@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 // For protected routes that need login:
-export const useRedirectIfNotAuthenticated = (redirectUrl = "/log-in") => {
+export const useRedirectIfNotAuthenticated = (redirectUrl = "/login") => {
   const authState = useSelector((state) => state.auth);
   const navigate = useNavigate();
   useEffect(() => {
