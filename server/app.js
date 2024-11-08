@@ -14,7 +14,7 @@ const { DB_URI, DB_PASSWORD, SESSION_STORE_SECRET, NODE_ENV } = process.env;
 
 const DB = DB_URI.replace("<PASSWORD>", DB_PASSWORD);
 
-app.use(morgan(process.env.NODE_ENV));
+app.use(morgan(process.env.NODE_ENV === "development" ? "dev" : "short"));
 
 app.use(
   cors({
@@ -28,7 +28,6 @@ app.use(express.json());
 app.use(express.static(`${__dirname}/dist`));
 app.use(
   session({
-    name: "murasaki_app",
     store: MongoStore.create({ mongoUrl: DB, collectionName: "sessions" }),
     secret: SESSION_STORE_SECRET,
     saveUninitialized: false,

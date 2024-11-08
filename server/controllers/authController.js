@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const uaParser = require("ua-parser-js");
+const UAParser = require("ua-parser-js");
 const User = require("../models/User");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
@@ -22,7 +22,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
   console.log(req.body);
   const { email, password } = req.body;
-  const userDoc = await User.findOne({ email });
+  const userDoc = await User.findOne({ email }).select("+password");
 
   if (!userDoc) throw new AppError(404, "No such user with the entered email");
 
@@ -33,7 +33,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   req.session.user = userDoc;
 
-  const parser = new uaParser(req.headers["user-agent"]);
+  const parser = new UAParser(req.headers["user-agent"]);
   const deviceInfo = parser.getResult();
 
   req.session.device = {
@@ -58,7 +58,7 @@ exports.logout = catchAsync(async (req, res, next) => {
 
   await req.session.destroy();
   res.clearCookie("murasaki_cookie");
-  console.log("Logged out successfully.. Cookie cleared if following shows undefined");
+  console.log("Logged out successfully.. Cookie cleared if following shows undefined:");
   console.log(req.session);
 
   res.status(200).json({
@@ -76,7 +76,7 @@ exports.checkAuth = (req, res, next) => {
   //   status: "fail",
   //   message: "User is not logged in",
   // });
-  else throw new AppError(401, "User is not authenticated");
+  throw new AppError(401, "User is not authenticated");
 };
 
 // ROUTE: /user [GET] - To be used exclusively by client-side
@@ -166,7 +166,8 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
   // (2) Find user via the hashed token.
   const user = await User.findOne({ passwordResetToken: hashedToken }).select(
-    "+passwordResetToken +passwordResetTokenExpiry"
+    // "+password +passwordResetToken +passwordResetTokenExpiry"  // passwordResetToken not explicitly required
+    "+password +passwordResetTokenExpiry"
   );
   if (!user) throw new AppError(400, "Invalid Token!");
   console.log("User found: ", user);
@@ -206,7 +207,8 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
   // (2) Find user via the hashed token.
   const user = await User.findOne({ passwordResetToken: hashedToken }).select(
-    "+passwordResetToken +passwordResetTokenExpiry"
+    // "+password +passwordResetToken +passwordResetTokenExpiry"  // passwordResetToken not explicitly required
+    "+password +passwordResetTokenExpiry"
   );
   if (!user) throw new AppError(400, "Invalid Token!");
   console.log("User found: ", user);

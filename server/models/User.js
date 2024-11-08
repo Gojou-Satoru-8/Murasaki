@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       unique: true,
       required: [true, "Username already taken"],
-      minLength: [3, "Username must be at least 5 characters long"],
+      minLength: [3, "Username must be at least 3 characters long"],
       validate: [validator.isAlphanumeric, "Please enter a valid username"],
     },
     name: {
@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema(
         validator.isStrongPassword,
         "Password must have atleast 1 uppercase, 1 lowercase, 1 numeric and 1 symbolic character",
       ],
+      select: false,
     },
     dateCreated: { type: Date, required: true, default: Date.now },
     lastPasswordChanged: {
@@ -134,6 +135,11 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 8);
   this.lastPasswordChanged = Date.now();
 
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  this.select("-__v");
   next();
 });
 
