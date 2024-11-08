@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
+      trim: true,
       unique: true,
       required: [true, "Username already taken"],
       minLength: [3, "Username must be at least 5 characters long"],
@@ -14,6 +15,7 @@ const userSchema = new mongoose.Schema(
     },
     name: {
       type: String,
+      trim: true,
       required: [true, "Name is a required field"],
       validate: {
         validator: function (val) {
@@ -33,6 +35,7 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      trim: true,
       required: [true, "Email is a required field"],
       unique: true,
       validate: [validator.isEmail, "Please enter a valid Email"],
@@ -54,8 +57,8 @@ const userSchema = new mongoose.Schema(
       // default: Date.now()
     },
     settings: {
-      uiTheme: { type: String, default: "light" },
-      codeEditorTheme: { type: String, default: "Atomone" },
+      uiTheme: { type: String, trim: true, default: "light" },
+      codeEditorTheme: { type: String, trim: true, default: "Atomone" },
       codeEditorWindowSize: {
         type: Number,
         default: 500,
