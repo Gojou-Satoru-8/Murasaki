@@ -10,14 +10,23 @@ const userSchema = new mongoose.Schema(
       unique: true,
       required: [true, "Username already taken"],
       minLength: [3, "Username must be at least 5 characters long"],
+      validate: [validator.isAlphanumeric, "Please enter a valid username"],
     },
     name: {
       type: String,
       required: [true, "Name is a required field"],
       validate: {
         validator: function (val) {
-          return val.search(/^[a-zA-Z]+ [a-zA-Z]+$/) !== -1;
-          // Regex for name consisting of firstName <Space> LastName
+          // Original simple regex: /^[A-Z][a-z]+ [A-z][a-z]+$/ [Accounts for firstName+lastName with alphabets only]
+          // const regex =
+          //   /^[A-Z][a-zA-Z]*(?:[-'][A-Z][a-zA-Z]*)?\s[A-Z][a-zA-Z]*(?:[-'][A-Z][a-zA-Z]*)?$/;
+          // return regex.test(val);  // This accounts for names like John O'Connor, John Levy-Hamilton
+          // OR:
+          return (
+            val.search(
+              /^[A-Z][a-zA-Z]*(?:[-'][A-Z][a-zA-Z]*)?\s[A-Z][a-zA-Z]*(?:[-'][A-Z][a-zA-Z]*)?$/
+            ) !== -1
+          );
         },
         message: "Please enter a valid Name",
       },
@@ -33,8 +42,12 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is a required field"],
       minLength: [8, "Password must have minimum 8 characters"],
       maxLength: [15, "Password must not exceed 15 characters"],
+      validate: [
+        validator.isStrongPassword,
+        "Password must have atleast 1 uppercase, 1 lowercase, 1 numeric and 1 symbolic character",
+      ],
     },
-    dateCreated: { type: Date, required: true, default: Date.now() },
+    dateCreated: { type: Date, required: true, default: Date.now },
     lastPasswordChanged: {
       type: Date,
       select: false,
@@ -75,8 +88,10 @@ userSchema.virtual("notes", {
 // MONGOOSE METHODS:
 userSchema.methods.isPasswordCorrect = async function (password) {
   console.log("Given password: ", password);
-
-  return await bcrypt.compare(password, this.password);
+  // return await bcrypt.compare(password, this.password);
+  // Being an aync function this will always wrap the result into a promise, so there is no point in awaiting the value
+  // of bcrypt.compare() here, since using await when calling the mongoose method is inevitable.
+  return bcrypt.compare(password, this.password);
 };
 
 userSchema.methods.generatePasswordResetToken = async function () {
