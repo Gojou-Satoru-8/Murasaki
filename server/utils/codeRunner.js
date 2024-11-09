@@ -12,29 +12,29 @@ const { Server } = require("socket.io");
 //   js: "node",
 // };
 
-const setupChildProcess = function (child_process, socket) {
-  child_process.stdout.on("data", (chunk) => {
+const setupChildProcess = function (childProcess, socket) {
+  childProcess.stdout.on("data", (chunk) => {
     console.log(chunk.toString());
     socket.emit("program-stdout", chunk.toString());
   });
 
-  child_process.stdout.on("end", () => {
+  childProcess.stdout.on("end", () => {
     console.log("------STDOUT END------");
     // socket.emit("program-stdout");
-    child_process.kill();
+    childProcess.kill();
   });
 
-  child_process.stderr.on("data", (chunk) => {
+  childProcess.stderr.on("data", (chunk) => {
     console.log("STDERR: ", chunk.toString());
     socket.emit("program-stderr", chunk.toString());
-    child_process.kill();
+    childProcess.kill();
   });
 
-  child_process.on("close", (code) => {
+  childProcess.on("close", (code) => {
     console.log(`Child Process closed with code: ${code}`);
     socket.emit("program-end", `\n\nProgram exited with code: ${code}`);
   });
-  child_process.on("error", (err) => {
+  childProcess.on("error", (err) => {
     console.log("Error in child-process", err);
   });
 };
@@ -43,7 +43,7 @@ const io = new Server(4000, {
   cors: { origin: ["http://localhost:5173", "http://localhost:3000"], credentials: true },
 });
 
-let child_process;
+let childProcess;
 
 io.on("connection", (socket) => {
   console.log("New connection from client with ID:", socket.id);
@@ -52,8 +52,8 @@ io.on("connection", (socket) => {
     // Message to be in the form: ["py", "...code"]
     // console.log(message);
 
-    // Kill existing child_process if any:
-    if (child_process) child_process.kill();
+    // Kill existing childProcess if any:
+    if (childProcess) childProcess.kill();
 
     // Extract file-extension and code-content, and write to a file.
     const [fileExt, code] = JSON.parse(message.trim());
@@ -66,22 +66,22 @@ io.on("connection", (socket) => {
     await fs.writeFile(filePath, code);
 
     // Spawn the bash child-process and setup.
-    child_process = spawn("bash", [scriptPath], { cwd: tempFolderPath });
-    setupChildProcess(child_process, socket);
+    childProcess = spawn("bash", [scriptPath], { cwd: tempFolderPath });
+    setupChildProcess(childProcess, socket);
   });
 
   socket.on("program-stdin", (message) => {
-    // If no child_process exists:
-    if (!child_process) {
+    // If no childProcess exists:
+    if (!childProcess) {
       socket.emit("input-error", "Please run a program first!");
       return;
     }
     console.log(message);
-    // Write to child_process's STDIN:
-    if (child_process.stdin.writable) {
+    // Write to childProcess's STDIN:
+    if (childProcess.stdin.writable) {
       // NOTE: Usually the message from client will be appended with a "\n"
-      if (!message.endsWith("\n")) message = message + "\n";
-      child_process.stdin.write(message);
+      if (!message.endsWith("\n")) message += "\n";
+      childProcess.stdin.write(message);
     } else {
       console.log("Cannot write to child-process STDIN");
       socket.emit("input-error", "Cannot write to child-process STDIN");
@@ -90,9 +90,9 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     console.log("REASON FOR DISCONNECTION:", reason); // Gives a default reason: client namespace disconnect
-    if (child_process) {
-      child_process.kill();
-      child_process = null;
+    if (childProcess) {
+      childProcess.kill();
+      childProcess = null;
     }
   });
 });

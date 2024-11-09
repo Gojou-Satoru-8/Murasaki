@@ -3,11 +3,11 @@ const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const morgan = require("morgan");
-const helmet = require("helmet");
+// const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 // const xss = require("xss-clean");  // Deprecated - need to search for alternative
-const hpp = require("hpp");
+// const hpp = require("hpp");
 
 const User = require("./models/User");
 const authRouter = require("./routes/authRouter");
@@ -23,7 +23,7 @@ app.use(morgan(process.env.NODE_ENV === "development" ? "dev" : "short"));
 
 // SECURITY MIDDLEWARES:
 // 1) Set security HTTP Headers:
-app.use(helmet());
+// app.use(helmet());
 
 // 2) Limit number of requests in a given time window (in ms) from a certain IP
 app.use(
