@@ -1,3 +1,4 @@
+// NOTE: DEPRECATED (Signup and Login is done in the same page ie Login.jsx with tabbed forms)
 import Header from "../components/Header";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { Divider, Input, Button } from "@nextui-org/react";

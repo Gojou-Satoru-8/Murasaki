@@ -104,7 +104,7 @@ const SettingsAccount = () => {
     <div className="mt-10 sm:w-5/6 lg:w-2/3 m-auto">
       {/* <h2 className="text-2xl text-center">Account Settings</h2> */}
       <Card>
-        <CardHeader className="flex-col justify-center pt-10 px-20 gap-4">
+        <CardHeader className="flex-col justify-center pt-10 px-20 gap-4 text-center">
           {!isEditing && (
             <>
               <Avatar

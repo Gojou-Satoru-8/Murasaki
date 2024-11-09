@@ -48,19 +48,24 @@ const ChangePasswordModalButton = () => {
     });
   };
 
-  const setTimeNotification = ({ message = "", error = "", tokenMsg = "" }, seconds = 3) => {
-    setTimeout(() => {
-      setUIElements({ loading: false, message, error, tokenMsg });
+  const setTimeNotification = (
+    { loading = false, message = "", error = "", tokenMsg = "" },
+    seconds = 0
+  ) => {
+    const timeout = setTimeout(() => {
+      setUIElements({ loading, message, error, tokenMsg });
     }, seconds * 1000);
+    return timeout;
   };
 
   const getTokenMail = async (e) => {
-    setUIElements({
-      loading: false,
-      message: "",
-      error: "",
-      tokenMsg: "Trying to mail your Token...",
-    });
+    // setUIElements({
+    //   loading: false,
+    //   message: "",
+    //   error: "",
+    //   tokenMsg: "Trying to mail your Token...",
+    // });
+    setTimeNotification({ tokenMsg: "Trying to mail your Token..." });
     // onOpen(); // Opens the modal
     try {
       const response = await fetch("http://localhost:3000/api/generate-token", {
@@ -71,16 +76,17 @@ const ChangePasswordModalButton = () => {
       });
       const data = await response.json();
       if (!response.ok || data.status === "fail") {
-        setTimeNotification({ error: data.message }, 2);
+        setTimeNotification({ error: data.message }, 1.5);
         return;
       }
-      setTimeNotification({ tokenMsg: data.message }, 2);
+      setTimeNotification({ tokenMsg: data.message }, 1.5);
     } catch (err) {
-      setTimeNotification({ error: "No Internet Connection!" }, 2);
+      setTimeNotification({ error: "No Internet Connection!" });
     }
   };
   const handlePasswordReset = async (e) => {
-    setUIElements({ loading: true, message: "", error: "", tokenMsg: "" });
+    // setUIElements({ loading: true, message: "", error: "", tokenMsg: "" });
+    setTimeNotification({ loading: true });
     e.preventDefault();
     const formData = new FormData(e.target);
     // for (const [name, value] of formData) {
@@ -91,7 +97,7 @@ const ChangePasswordModalButton = () => {
     const errors = validatePassword(formDataObj.currentPassword, formDataObj.newPassword);
     if (errors.length > 0) {
       //   setUIElements({ loading: false, message: "", error: errors.join(", ") });
-      setTimeNotification({ error: errors.join(". ") }, 0);
+      setTimeNotification({ error: errors.join(". ") });
       return;
     }
     try {
@@ -111,24 +117,28 @@ const ChangePasswordModalButton = () => {
       }
       const data = await response.json();
       if (!response.ok || data.status === "fail") {
-        setTimeNotification({ error: data.message }, 2);
+        setTimeNotification({ error: data.message }, 1.5);
         return;
       }
       //   dispatch(authActions.updateUser({ user: data.user })); // No need as we are not storing password in
       // client state
       // Finally, when successful:
-      setTimeNotification({ message: data.message }, 2);
+      setTimeNotification({ message: data.message }, 1.5);
     } catch (err) {
-      setTimeNotification({ error: "No Internet Connection!" }, 2);
+      setTimeNotification({ error: "No Internet Connection!" }, 1.5);
     }
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      if (uiElements.message || uiElements.error)
-        setUIElements((prev) => ({ ...prev, message: "", error: "" }));
-    }, 4000);
-  }, [uiElements]);
+    // setTimeout(() => {
+    //   if (uiElements.message || uiElements.error || uiElements.tokenMsg)
+    //     setUIElements((prev) => ({ ...prev, message: "", error: "", tokenMsg: "" }));
+    // }, 4000);
+    if (uiElements.message || uiElements.error || uiElements.tokenMsg) {
+      const timeout = setTimeNotification({}, 4);
+      return () => clearTimeout(timeout);
+    }
+  }, [uiElements.message, uiElements.error, uiElements.tokenMsg]);
 
   return (
     <>
@@ -151,26 +161,24 @@ const ChangePasswordModalButton = () => {
             <>
               <ModalHeader className="flex flex-col gap-1">Update Your Password</ModalHeader>
               <Form onSubmit={handlePasswordReset}>
-                <ModalBody className="flex flex-col gap-4">
+                <ModalBody className="flex flex-col gap-4 text-center">
                   {uiElements.loading && (
-                    <div className="bg-primary rounded py-2 px-4">
+                    <div className="bg-primary rounded-lg py-2 px-4">
                       <p>Saving! Please wait</p>
                     </div>
                   )}
                   {uiElements.error && (
-                    <div className="bg-danger rounded py-2 px-4">
+                    <div className="bg-danger rounded-lg py-2 px-4">
                       <p>{uiElements.error}</p>
                     </div>
                   )}
                   {uiElements.message && (
-                    <div className="bg-success rounded py-2 px-4">
+                    <div className="bg-success rounded-lg py-2 px-4">
                       <p>{uiElements.message}</p>
                     </div>
                   )}
 
-                  {uiElements.tokenMsg && (
-                    <h3 className="text-lg text-center">{uiElements.tokenMsg}</h3>
-                  )}
+                  {uiElements.tokenMsg && <h3 className="text-lg">{uiElements.tokenMsg}</h3>}
 
                   <Input
                     type={eyeIconVisible.token ? "text" : "password"}

@@ -51,20 +51,20 @@ const LoginPage = () => {
       <Header />
       <main className="h-[80vh]">
         <Card className="w-[95%] md:w-2/3 lg:w-1/2 mx-auto mt-8" isBlurred>
-          <CardHeader className="flex-col justify-center pt-10 px-20 gap-4">
+          <CardHeader className="flex-col justify-center pt-10 px-20 gap-4 text-center">
             <h1 className="text-4xl">{selectedForm}</h1>
             {uiElements.loading && (
-              <div className="bg-primary rounded py-2 px-4">
+              <div className="bg-primary rounded-lg py-2 px-4">
                 <p>Validating... Please wait!</p>
               </div>
             )}
             {uiElements.message && (
-              <div className="bg-success rounded py-2 px-4">
+              <div className="bg-success rounded-lg py-2 px-4">
                 <p>{uiElements.message}</p>
               </div>
             )}
             {uiElements.error && (
-              <div className="bg-danger rounded py-2 px-4">
+              <div className="bg-danger rounded-lg py-2 px-4">
                 <p>{uiElements.error}</p>
               </div>
             )}
