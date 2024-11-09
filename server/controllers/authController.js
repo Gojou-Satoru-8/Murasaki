@@ -264,3 +264,11 @@ exports.updateUserSettings = catchAsync(async (req, res, next) => {
     .status(200)
     .json({ status: "success", message: "Settings updated successfully", user: updatedUser });
 });
+
+exports.getTinyMCEKey = (req, res, next) => {
+  const { TINYMCE_API_KEY } = process.env;
+  if (!TINYMCE_API_KEY) throw new AppError(404, "Missing API Key for TinyMCE");
+  res
+    .status(200)
+    .json({ status: "success", message: "API Key retrieved and sent", apiKey: TINYMCE_API_KEY });
+};

@@ -18,4 +18,5 @@ router
   .delete(authController.deleteCurrentUser, authController.logout);
 router.route("/update-password").post(authController.updatePassword);
 router.route("/user/settings").patch(authController.updateUserSettings);
+router.route("/tinymce-key").get(authController.getTinyMCEKey);
 module.exports = router;
