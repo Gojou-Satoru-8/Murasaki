@@ -138,7 +138,7 @@ exports.mailPasswordResetToken = catchAsync(async (req, res, next) => {
   try {
     await sendMail({
       recipient: ["ankushbhowmikf12@gmail.com", "itsmeankush893@outlook.com", req.body.email],
-      subject: "Reset Password Link (Valid for 10 minutes)",
+      subject: "Reset Password Token (Valid for 10 minutes)",
       mailBody: message,
     });
     console.log("Mail sent successfully");
