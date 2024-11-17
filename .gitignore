@@ -23,5 +23,6 @@ dist-ssr
 *.sw?
 
 # Program files:
+server/.env
 server/temp/program*
 server/temp/a*
